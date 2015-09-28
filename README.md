@@ -1,2 +1,3 @@
 # sample-app
-Sample app for the FamlySearch web components
+
+Sample app for the FamilySearch web components

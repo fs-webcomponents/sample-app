@@ -1,0 +1,21 @@
+{
+  "name": "sample-app",
+  "version": "0.0.0",
+  "homepage": "https://github.com/fs-webcomponents/sample-app",
+  "authors": [
+    "Justin York"
+  ],
+  "description": "Sample app for the FamilySearch web components",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~1.1.4"
+  }
+}
