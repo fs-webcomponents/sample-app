@@ -17,6 +17,8 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#~1.1.4",
-    "page": "visionmedia/page.js#~1.6.3"
+    "page": "visionmedia/page.js#~1.6.3",
+    "fs-client": "fs-webcomponents/fs-client#~0.1.9",
+    "fs-signin": "fs-webcomponents/fs-signin#~0.1.7"
   }
 }

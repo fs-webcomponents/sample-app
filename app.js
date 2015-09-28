@@ -15,8 +15,8 @@ window.addEventListener('WebComponentsReady', function() {
   });
   
   function currentUser(context, next){
-    setTimeout(function(){
-      context.params.personId = 'foo';
+    document.getElementById('client').client.getCurrentUser().then(function(response){
+      context.params.personId = response.getUser().getPersonId();
       next();
     });
   }
