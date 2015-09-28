@@ -6,11 +6,14 @@
     <title>FamilySearch Web Components Sample App</title>
     
     <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="/bower_components/page/page.js"></script>
+    <link rel="import" href="elements.html">
   </head>
   <body>
+    <template is="dom-bind" id="app">
+      PID: <span>{{personId}}</span>
+    </template>
     
-    
+    <script src="/bower_components/page/page.js"></script>
     <script src="/app.js"></script>
   </body>
 </html>
