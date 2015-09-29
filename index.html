@@ -12,16 +12,15 @@
   <body>
     <template is="dom-bind" id="app">
       
+      <fs-client id="client" client-id="a02j00000099Mc2AAE" redirect-uri="/" environment="sandbox" save-access-token></fs-client>
+      
       <paper-toolbar>
-        <div class="container">
-          <h1>Sample App</h1>
-        </div>
+        <div class="title">Sample App</div>
+        <span id="username">{{username}}</span>
+        <fs-signin></fs-signin>
       </paper-toolbar>
       
       <div class="container">
-        <fs-client id="client" client-id="a02j00000099Mc2AAE" redirect-uri="/" environment="sandbox" save-access-token></fs-client>
-        <fs-signin></fs-signin>
-        
         <paper-card id="person-header">
           <div class="card-content">
             <fs-person-summary person-id="[[personId]]"></fs-person-summary>

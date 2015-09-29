@@ -1,6 +1,9 @@
 window.addEventListener('WebComponentsReady', function() {
   
-  page('/person/:personId', displayPerson);
+  var app = document.getElementById('app'),
+      client = document.getElementById('client').client;
+  
+  page('/person/:personId', currentUser, displayPerson);
   page('/person', currentUser, displayPerson);
   
   // Forward to /person by default to load the current user person's page
@@ -15,15 +18,23 @@ window.addEventListener('WebComponentsReady', function() {
   });
   
   function currentUser(context, next){
-    document.getElementById('client').client.getCurrentUser().then(function(response){
-      context.params.personId = response.getUser().getPersonId();
+    client.getCurrentUser().then(function(response){
+      context.user = response.getUser();
       next();
     });
   }
   
   function displayPerson(context){
-    console.log(context);
-    document.getElementById('app').personId = context.params.personId;
+    var personId = context.params.personId;
+    if(!personId){
+      personId = context.user.getPersonId();
+    }
+    
+    // In sandbox, users are given random names which sometimes confuses
+    // people so we show the contact name here instead. In production you'll
+    // probaly want to chang this to `getDisplayName()`.
+    app.username = context.user.getContactName();
+    app.personId = personId;
   }
 
 });
