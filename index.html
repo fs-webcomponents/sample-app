@@ -11,16 +11,27 @@
   </head>
   <body>
     <template is="dom-bind" id="app">
-      <fs-client id="client" client-id="a02j00000099Mc2AAE" redirect-uri="/" environment="sandbox" save-access-token></fs-client>
-      <fs-signin></fs-signin>
       
-      <div id="person-header">
-        <fs-person-summary person-id="[[personId]]"></fs-person-summary>
-      </div>
+      <paper-toolbar>
+        <div class="container">
+          <h1>Sample App</h1>
+        </div>
+      </paper-toolbar>
       
-      <div id="family">
-        <h3>Family</h3>
-        <fs-person-family person-id="[[personId]]"></fs-person-family>
+      <div class="container">
+        <fs-client id="client" client-id="a02j00000099Mc2AAE" redirect-uri="/" environment="sandbox" save-access-token></fs-client>
+        <fs-signin></fs-signin>
+        
+        <paper-card id="person-header">
+          <div class="card-content">
+            <fs-person-summary person-id="[[personId]]"></fs-person-summary>
+          </div>
+        </paper-card>
+        
+        <div id="family">
+          <h3>Family</h3>
+          <fs-person-family person-id="[[personId]]"></fs-person-family>
+        </div>
       </div>
     </template>
     

@@ -21,6 +21,8 @@
     "fs-client": "fs-webcomponents/fs-client#~0.1.9",
     "fs-signin": "fs-webcomponents/fs-signin#~0.1.7",
     "fs-person-summary": "fs-webcomponents/fs-person-summary#~0.1.2",
-    "fs-person-family": "fs-webcomponents/fs-person-family#~0.1.2"
+    "fs-person-family": "fs-webcomponents/fs-person-family#~0.1.2",
+    "paper-card": "PolymerElements/paper-card#~1.0.5",
+    "paper-toolbar": "PolymerElements/paper-toolbar#~1.0.4"
   }
 }
