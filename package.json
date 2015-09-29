@@ -20,5 +20,6 @@
   "dependencies": {
     "bower": "^1.5.3",
     "http-server": "^0.8.5"
-  }
+  },
+  "cacheDirectories": ["node_modules", "bower_components"]
 }
