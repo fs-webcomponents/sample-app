@@ -19,6 +19,16 @@ window.addEventListener('WebComponentsReady', function() {
   });
   
   /**
+   * Handle logout
+   */
+  $client.addEventListener('authenticated-changed', function(event){
+    if(!event.detail.value){
+      app.personId = '';
+      app.username = '';
+    }
+  });
+  
+  /**
    * Make sure the user is authenticated.
    */
   function ensureAuth(context, next){
