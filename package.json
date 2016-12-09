@@ -4,7 +4,7 @@
   "description": "Sample app for the FamilySearch web components",
   "main": "index.html",
   "scripts": {
-    "start": "http-server -p $PORT",
+    "start": "node index.js",
     "postinstall": "bower install"
   },
   "repository": {
@@ -19,6 +19,6 @@
   "homepage": "https://github.com/fs-webcomponents/sample-app",
   "dependencies": {
     "bower": "^1.5.3",
-    "http-server": "^0.8.5"
+    "spa-server": "^1.0.0"
   }
 }

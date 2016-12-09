@@ -15,9 +15,7 @@ window.addEventListener('WebComponentsReady', function() {
   
   // Use hashbangs to get a one page app.
   // For some reason this has to be after the route declarations.
-  page({
-    hashbang: true
-  });
+  page();
   
   $client.addEventListener('authenticated-changed', function(event){
     
@@ -25,6 +23,7 @@ window.addEventListener('WebComponentsReady', function() {
     if(!event.detail.value){
       app.personId = '';
       app.username = '';
+      page('/');
     }
     
     // After login, reload the page to cleare the code query param from the URL
