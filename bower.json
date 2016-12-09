@@ -18,10 +18,10 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^1.0.0",
     "page": "visionmedia/page.js#~1.6.3",
-    "fs-client": "fs-webcomponents/fs-client#~0.1.9",
-    "fs-signin": "fs-webcomponents/fs-signin#~0.1.7",
-    "fs-person-summary": "fs-webcomponents/fs-person-summary#~0.1.4",
-    "fs-person-family": "fs-webcomponents/fs-person-family#~0.1.4",
+    "fs-client": "fs-webcomponents/fs-client#lite-sdk",
+    "fs-signin": "fs-webcomponents/fs-signin#lite-sdk",
+    "fs-person-summary": "fs-webcomponents/fs-person-summary#lite-sdk",
+    "fs-person-family": "fs-webcomponents/fs-person-family#lite-sdk",
     "paper-card": "PolymerElements/paper-card#~1.0.5",
     "paper-toolbar": "PolymerElements/paper-toolbar#~1.0.4"
   }

@@ -32,7 +32,7 @@ window.addEventListener('WebComponentsReady', function() {
    * Make sure the user is authenticated.
    */
   function ensureAuth(context, next){
-    if(!client.hasAccessToken()){
+    if(!client.getAccessToken()){
       $client.addEventListener('authenticated-changed', function(event){
         if(event.detail.value){
           next();
@@ -48,8 +48,12 @@ window.addEventListener('WebComponentsReady', function() {
    * We might also need the current user's person id.
    */
   function currentUser(context, next){
-    client.getCurrentUser().then(function(response){
-      context.user = response.getUser();
+    client.get('/platform/users/current', function(error, response){
+      if(error){
+        console.error(error);
+      } else if(response && response.statusCode === 200){
+        context.user = response.data.users[0];
+      }
       next();
     });
   }
@@ -63,13 +67,13 @@ window.addEventListener('WebComponentsReady', function() {
     // specified in the url
     var personId = context.params.personId;
     if(!personId){
-      personId = context.user.getPersonId();
+      personId = context.user.personId;
     }
     
     // In sandbox, users are given random names which sometimes confuses
     // people so we show the contact name here instead. In production you'll
     // probaly want to chang this to `getDisplayName()`.
-    app.username = context.user.getContactName();
+    app.username = context.user.contactName;
     app.personId = personId;
   }
 
