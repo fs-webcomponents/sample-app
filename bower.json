@@ -21,7 +21,7 @@
     "fs-client": "fs-webcomponents/fs-client#lite-sdk",
     "fs-signin": "fs-webcomponents/fs-signin#lite-sdk",
     "fs-person-summary": "fs-webcomponents/fs-person-summary#lite-sdk",
-    "fs-person-family": "fs-webcomponents/fs-person-family#lite-sdk",
+    "fs-person-families": "fs-webcomponents/fs-person-families#lite-sdk",
     "paper-card": "PolymerElements/paper-card#~1.0.5",
     "paper-toolbar": "PolymerElements/paper-toolbar#~1.0.4"
   }

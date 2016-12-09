@@ -18,13 +18,18 @@ window.addEventListener('WebComponentsReady', function() {
     hashbang: true
   });
   
-  /**
-   * Handle logout
-   */
+  // Handle logout
   $client.addEventListener('authenticated-changed', function(event){
     if(!event.detail.value){
       app.personId = '';
       app.username = '';
+    }
+  });
+  
+  // Listen for navigation events
+  document.querySelector('fs-person-families').addEventListener('person-tap', function(e){
+    if(e.detail.personId){
+      page('/person/' + e.detail.personId);
     }
   });
   
@@ -72,7 +77,7 @@ window.addEventListener('WebComponentsReady', function() {
     
     // In sandbox, users are given random names which sometimes confuses
     // people so we show the contact name here instead. In production you'll
-    // probaly want to chang this to `getDisplayName()`.
+    // probaly want to chang this to displayName.
     app.username = context.user.contactName;
     app.personId = personId;
   }
