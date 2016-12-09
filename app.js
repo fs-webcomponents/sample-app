@@ -2,10 +2,11 @@ window.addEventListener('WebComponentsReady', function() {
   
   var app = document.getElementById('app'),
       $client = document.getElementById('client'),
-      client = $client.client;
+      client = $client.client,
+      currentUser;
   
-  page('/person/:personId', ensureAuth, currentUser, displayPerson);
-  page('/person', ensureAuth, currentUser, displayPerson);
+  page('/person/:personId', ensureAuth, loadUser, displayPerson);
+  page('/person', ensureAuth, loadUser, displayPerson);
   
   // Forward to /person by default to load the current user person's page
   page('/', function(ctx){
@@ -52,15 +53,20 @@ window.addEventListener('WebComponentsReady', function() {
    * Get the current user so we can show the username in the title.
    * We might also need the current user's person id.
    */
-  function currentUser(context, next){
-    client.get('/platform/users/current', function(error, response){
-      if(error){
-        console.error(error);
-      } else if(response && response.statusCode === 200){
-        context.user = response.data.users[0];
-      }
+  function loadUser(context, next){
+    if(currentUser){
+      context.user = currentUser;
       next();
-    });
+    } else {
+      client.get('/platform/users/current', function(error, response){
+        if(error){
+          console.error(error);
+        } else if(response && response.statusCode === 200){
+          currentUser = context.user = response.data.users[0];
+        }
+        next();
+      });
+    }
   }
   
   /**
