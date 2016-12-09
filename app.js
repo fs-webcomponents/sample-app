@@ -19,11 +19,17 @@ window.addEventListener('WebComponentsReady', function() {
     hashbang: true
   });
   
-  // Handle logout
   $client.addEventListener('authenticated-changed', function(event){
+    
+    // Reset app state on logout
     if(!event.detail.value){
       app.personId = '';
       app.username = '';
+    }
+    
+    // After login, reload the page to cleare the code query param from the URL
+    else {
+      window.location.href = window.location.pathname + window.location.hash;
     }
   });
   
