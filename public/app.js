@@ -19,18 +19,13 @@ window.addEventListener('WebComponentsReady', function() {
   // For some reason this has to be after the route declarations.
   page();
   
+  // Reset app state on logout
   $client.addEventListener('authenticated-changed', function(event){
-    
-    // Reset app state on logout
     if(!event.detail.value){
+      app.person = undefined;
       app.personId = '';
       app.user = {};
       page('/');
-    }
-    
-    // After login, reload the page to cleare the code query param from the URL
-    else {
-      window.location.href = window.location.pathname + window.location.hash;
     }
   });
   
