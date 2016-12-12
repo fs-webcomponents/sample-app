@@ -20,5 +20,6 @@
   "dependencies": {
     "bower": "^1.5.3",
     "spa-server": "^1.0.0"
-  }
+  },
+  "cacheDirectories": ["node_modules"]
 }
