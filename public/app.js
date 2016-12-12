@@ -20,7 +20,7 @@ window.addEventListener('WebComponentsReady', function() {
   page();
   
   $client.addEventListener('authenticated-changed', function(event){
-    console.log('authenticated-changed');
+    
     // Reset app state on logout
     if(!event.detail.value){
       app.personId = '';
@@ -36,13 +36,11 @@ window.addEventListener('WebComponentsReady', function() {
   
   // Listen for navigation events
   document.querySelector('fs-person-families').addEventListener('person-tap', function(e){
-    console.log('person-tap');
     if(e.detail.personId){
       page('/person/' + e.detail.personId);
     }
   });
   $history.addEventListener('person-select', function(e){
-    console.log('person-select');
     if(e.detail.personId){
       page('/person/' + e.detail.personId);
     }
@@ -84,8 +82,6 @@ window.addEventListener('WebComponentsReady', function() {
    * Load the person for the view
    */
   function loadPerson(context, next){
-    
-    console.log('loadPerson', context);
     
     // Set the person ID for elements that need it to request related resources
     app.personId = context.params.personId;
