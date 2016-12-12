@@ -28,7 +28,7 @@
         <fs-signin></fs-signin>
       </paper-toolbar>
       
-      <div class="container">
+      <div id="main" class="container">
         <paper-card id="person-header">
           <div class="card-content">
             <fs-person-summary person="[[person]]"></fs-person-summary>
@@ -43,6 +43,11 @@
         <div id="family">
           <h3>Family</h3>
           <fs-person-families person-id="[[personId]]"></fs-person-families>
+        </div>
+        
+        <div>
+          <h3>Sources</h3>
+          <fs-person-sources person-id="[[personId]]"></fs-person-sources>
         </div>
       </div>
     </template>
