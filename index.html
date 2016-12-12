@@ -11,6 +11,13 @@
   </head>
   <body>
     <template is="dom-bind" id="app">
+      <style is="custom-style">
+        fs-person-families {
+          --fs-person-chip-hover: {
+            cursor: pointer;
+          }
+        }
+      </style>
       
       <fs-client id="client" app-key="a02j00000099Mc2AAE" redirect-uri="/" save-access-token reload-after-code="."></fs-client>
       
