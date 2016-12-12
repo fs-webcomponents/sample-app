@@ -1,0 +1,92 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-item-body/paper-item-body.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+
+<!--
+List the 10 most recent persons the user has viewed.
+
+Basic example:
+
+    <person-history></person-history>
+
+@element user-history
+-->
+<dom-module id="person-history">
+  <template>
+    <style>
+      paper-dropdown-menu {
+        --paper-input-container-label: {
+          color: #fff;
+        }
+        --paper-input-container-input: {
+          color: #fff;
+        }
+        --paper-input-container-underline: {
+          display: none;
+        }
+        --paper-dropdown-menu-icon: {
+          color: #fff;
+        }
+      }
+    </style>
+    <paper-dropdown-menu label="History" no-label-float>
+      <paper-listbox class="dropdown-content">
+        <template is="dom-repeat" items="{{persons}}">
+          <paper-item label="{{item.display.name}}" on-tap="_selectPerson">
+            <paper-item-body two-line>
+              <div>{{item.display.name}}</div>
+              <div secondary>{{item.id}}</div>
+            </paper-item-body>
+          </paper-item>
+        </template>
+      </paper-listbox>
+    </paper-card>
+  </template>
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'person-history',
+    
+    properties: {
+      
+      persons: {
+        type: Array,
+        value: function(){
+          return [];
+        }
+      }
+      
+    },
+    
+    addPerson: function(person){
+      if(!this._containsPerson(person)){
+        this.unshift('persons', person);
+        while(this.persons.length > 10){
+          this.pop('persons');
+        }  
+      }
+    },
+    
+    _containsPerson: function(person){
+      var personId = person.id,
+          contains, i;
+      for(i = 0, contains = false; i < this.persons.length && !contains; i++){
+        if(this.persons[i].id === personId){
+          contains = true;
+        }
+      }
+      return contains;
+    },
+    
+    _selectPerson: function(event){
+      this.fire('person-select', {personId: event.model.item.id});
+    }
+    
+  });
+
+</script>

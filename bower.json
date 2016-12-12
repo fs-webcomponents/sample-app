@@ -24,6 +24,8 @@
     "fs-person-families": "fs-webcomponents/fs-person-families#^1.0.0",
     "paper-card": "PolymerElements/paper-card#^1.0.5",
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.0.4",
-    "fs-person-facts": "fs-webcomponents/fs-person-facts#^1.1.1"
+    "fs-person-facts": "fs-webcomponents/fs-person-facts#^1.1.1",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.4.3",
+    "paper-listbox": "^1.1.2"
   }
 }

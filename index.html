@@ -16,20 +16,21 @@
       
       <paper-toolbar>
         <div class="title">Sample App</div>
-        <span id="username">{{username}}</span>
+        <span id="username">[[user.username]]</span>
+        <person-history></person-history>
         <fs-signin></fs-signin>
       </paper-toolbar>
       
       <div class="container">
         <paper-card id="person-header">
           <div class="card-content">
-            <fs-person-summary person-id="[[personId]]"></fs-person-summary>
+            <fs-person-summary person="[[person]]"></fs-person-summary>
           </div>
         </paper-card>
         
         <div>
           <h3>Facts</h3>
-          <fs-person-facts person-id="[[personId]]"></fs-person-facts>
+          <fs-person-facts person="[[person]]"></fs-person-facts>
         </div>
         
         <div id="family">

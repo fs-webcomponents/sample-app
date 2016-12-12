@@ -2,14 +2,16 @@ window.addEventListener('WebComponentsReady', function() {
   
   var app = document.getElementById('app'),
       $client = document.getElementById('client'),
-      client = $client.client,
-      currentUser;
+      $history = document.querySelector('person-history'),
+      client = $client.client;
   
-  page('/person/:personId', ensureAuth, loadUser, displayPerson);
-  page('/person', ensureAuth, loadUser, displayPerson);
+  page('/person/:personId', ensureAuth, loadUser, loadPerson);
+  page('/person', ensureAuth, loadUser, function(){
+    page('/person/' + app.user.personId);
+  });
   
   // Forward to /person by default to load the current user person's page
-  page('/', function(ctx){
+  page('/', function(){
     page('/person');
   });
   
@@ -18,11 +20,11 @@ window.addEventListener('WebComponentsReady', function() {
   page();
   
   $client.addEventListener('authenticated-changed', function(event){
-    
+    console.log('authenticated-changed');
     // Reset app state on logout
     if(!event.detail.value){
       app.personId = '';
-      app.username = '';
+      app.user = {};
       page('/');
     }
     
@@ -34,6 +36,13 @@ window.addEventListener('WebComponentsReady', function() {
   
   // Listen for navigation events
   document.querySelector('fs-person-families').addEventListener('person-tap', function(e){
+    console.log('person-tap');
+    if(e.detail.personId){
+      page('/person/' + e.detail.personId);
+    }
+  });
+  $history.addEventListener('person-select', function(e){
+    console.log('person-select');
     if(e.detail.personId){
       page('/person/' + e.detail.personId);
     }
@@ -59,15 +68,12 @@ window.addEventListener('WebComponentsReady', function() {
    * We might also need the current user's person id.
    */
   function loadUser(context, next){
-    if(currentUser){
-      context.user = currentUser;
-      next();
-    } else {
+    if(!app.username){
       client.get('/platform/users/current', function(error, response){
         if(error){
           console.error(error);
         } else if(response && response.statusCode === 200){
-          currentUser = context.user = response.data.users[0];
+          app.user = response.data.users[0];
         }
         next();
       });
@@ -75,22 +81,25 @@ window.addEventListener('WebComponentsReady', function() {
   }
   
   /**
-   * Show the requested person of the current user's person
+   * Load the person for the view
    */
-  function displayPerson(context){
+  function loadPerson(context, next){
     
-    // Use the current user's person id if there was no person id
-    // specified in the url
-    var personId = context.params.personId;
-    if(!personId){
-      personId = context.user.personId;
-    }
+    console.log('loadPerson', context);
     
-    // In sandbox, users are given random names which sometimes confuses
-    // people so we show the contact name here instead. In production you'll
-    // probaly want to chang this to displayName.
-    app.username = context.user.contactName;
-    app.personId = personId;
+    // Set the person ID for elements that need it to request related resources
+    app.personId = context.params.personId;
+    
+    // Load the person for elements that we can pass the person too. This prevents
+    // them from duplicating person requests
+    client.get('/platform/tree/persons/' + context.params.personId, function(error, response){
+      if(error){
+        console.error(error);
+      } else if(response && response.statusCode === 200){
+        app.person = response.data.persons[0];
+        $history.addPerson(app.person);
+      }
+    });
   }
 
 });
