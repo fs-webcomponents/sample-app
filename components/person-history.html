@@ -65,6 +65,10 @@ Basic example:
       
     },
     
+    clear: function(){
+      this.persons = [];
+    },
+    
     addPerson: function(person){
       if(!this._containsPerson(person)){
         this.unshift('persons', person);

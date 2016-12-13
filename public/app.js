@@ -27,6 +27,7 @@ window.addEventListener('WebComponentsReady', function() {
       app.person = undefined;
       app.personId = '';
       app.user = {};
+      $history.clear();
       page('/');
     }
   });
