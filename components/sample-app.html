@@ -127,8 +127,13 @@
       
       loading: {
         type: Boolean,
-        value: false
+        computed: '_isLoading(personLoading, userLoading)'
       },
+      
+      userLoading: {
+        type: Boolean,
+        value: false
+      }
       
     },
     
@@ -188,6 +193,10 @@
       
     },
     
+    _isLoading: function(personLoading, userLoading){
+      return personLoading || userLoading;
+    },
+    
     _personChanged: function(person){
       if(person){
         this.$.history.addPerson(person);
@@ -205,9 +214,9 @@
       loadUser: function(context, next){
         var app = this;
         if(!app.user){
-          app.loading = true;
+          app.userLoading = true;
           app.getClient().get('/platform/users/current', function(error, response){
-            app.loading = false;
+            app.userLoading = false;
             if(error){
               console.error(error);
             } else if(response && response.statusCode === 200){
