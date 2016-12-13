@@ -2,20 +2,17 @@
 <script src="/bower_components/page/page.js"></script>
 
 <!-- Paper Elements -->
-<link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
 
 <!-- FamilySearch Components -->
 <link rel="import" href="../bower_components/fs-client/fs-client.html">
 <link rel="import" href="../bower_components/fs-signin/fs-signin.html">
-<link rel="import" href="../bower_components/fs-person-summary/fs-person-summary.html">
-<link rel="import" href="../bower_components/fs-person-families/fs-person-families.html">
-<link rel="import" href="../bower_components/fs-person-facts/fs-person-facts.html">
-<link rel="import" href="../bower_components/fs-person-sources/fs-person-sources.html">
+<link rel="import" href="../bower_components/fs-person-behavior/fs-person-behavior.html">
 
 <!-- Custom Components -->
 <link rel="import" href="person-history.html">
+<link rel="import" href="person-details.html">
 
 <dom-module id="sample-app">
   <template>
@@ -37,12 +34,6 @@
         }
       }
       
-      fs-person-families {
-        --fs-person-chip-hover: {
-          cursor: pointer;
-        }
-      }
-      
       .container {
         max-width: 900px;
         margin: auto;
@@ -53,10 +44,6 @@
         flex: 1;
       }
       
-      #username {
-        margin: 0 16px;
-      }
-      
       #welcome {
         text-align: center;
       }
@@ -65,10 +52,6 @@
         height: 600px;
         margin: auto;
         margin-top: 64px;
-      }
-      
-      #person-header {
-        display: block;
       }
       
       #loader {
@@ -103,7 +86,6 @@
     
     <paper-toolbar>
       <div class="title"><a href="/">Sample App</a></div>
-      <span id="username">[[user.username]]</span>
       <person-history id="history"></person-history>
       <fs-signin></fs-signin>
     </paper-toolbar>
@@ -117,25 +99,7 @@
           <div><img src="/public/fs-wc-screenshot.png" /></div>
         </div>
         
-        <div id="person" hidden$="[[!authenticated]]">
-          <paper-card id="person-header">
-            <div class="card-content">
-              <fs-person-summary person="[[person]]"></fs-person-summary>
-            </div>
-          </paper-card>
-          <div>
-            <h3>Facts</h3>
-            <fs-person-facts person="[[person]]"></fs-person-facts>
-          </div>
-          <div id="family">
-            <h3>Family</h3>
-            <fs-person-families person-id="[[personId]]" id="families"></fs-person-families>
-          </div>
-          <div>
-            <h3>Sources</h3>
-            <fs-person-sources person-id="[[personId]]"></fs-person-sources>
-          </div>
-        </div>
+        <person-details id="personDetails" person="[[person]]" hidden$="[[!authenticated]]"></person-details>
       </div>
       
     </div>
@@ -164,17 +128,24 @@
       loading: {
         type: Boolean,
         value: false
-      }
+      },
       
     },
     
+    behaviors: [FSPersonBehavior],
+    
+    observers: [
+      '_personChanged(person)'
+    ],
+    
     attached: function(){
       var app = this,
-          $client = this.$.client,
-          $history = this.$.history,
-          client = $client.client;
+          loadUser = this._routeMiddleware.loadUser.bind(this),
+          ensureAuth = this._routeMiddleware.ensureAuth.bind(this);
           
-      page('/person/:personId', ensureAuth, loadUser, loadPerson);
+      page('/person/:personId', ensureAuth, loadUser, function(context){
+        app.personId = context.params.personId;
+      });
       page('/person', ensureAuth, loadUser, function(){
         page('/person/' + app.user.personId);
       });
@@ -183,7 +154,7 @@
       // so that we then know who the start person is.
       // When signed out, show a welcome message.
       page('/', function(){
-        if($client.authenticated){
+        if(app.isAuthenticated()){
           page('/person');
         }
       });
@@ -193,85 +164,64 @@
       page();
       
       // Reset app state on logout
-      $client.addEventListener('authenticated-changed', function(event){
+      app.$.client.addEventListener('authenticated-changed', function(event){
         if(!event.detail.value){
           app.person = undefined;
           app.personId = '';
           app.user = {};
-          $history.clear();
+          app.$.history.clear();
           page('/');
         }
       });
       
       // Listen for navigation events
-      this.$.families.addEventListener('person-tap', function(e){
+      app.$.personDetails.addEventListener('person-tap', function(e){
         if(e.detail.personId){
           page('/person/' + e.detail.personId);
         }
       });
-      $history.addEventListener('person-select', function(e){
+      app.$.history.addEventListener('person-select', function(e){
         if(e.detail.personId){
           page('/person/' + e.detail.personId);
         }
       });
       
-      /**
-       * Make sure the user is authenticated.
-       */
-      function ensureAuth(context, next){
-        if(!client.getAccessToken()){
-          $client.addEventListener('authenticated-changed', function(event){
-            if(event.detail.value){
-              next();
-            }
-          });
+    },
+    
+    _personChanged: function(person){
+      if(person){
+        this.$.history.addPerson(person);
+      }
+    },
+    
+    _routeMiddleware: {
+      ensureAuth: function(context, next){
+        if(!app.isAuthenticated()){
+          page('/');
         } else {
           next();
         }
-      }
-      
-      /**
-       * Get the current user so we can show the username in the title.
-       * We might also need the current user's person id.
-       */
-      function loadUser(context, next){
-        if(!app.username){
+      },
+      loadUser: function(context, next){
+        var app = this;
+        if(!app.user){
           app.loading = true;
-          client.get('/platform/users/current', function(error, response){
+          app.getClient().get('/platform/users/current', function(error, response){
             app.loading = false;
             if(error){
               console.error(error);
             } else if(response && response.statusCode === 200){
               app.user = response.data.users[0];
             } else if(response && response.statusCode === 401){
-              $client.signOut();
-              return page('/');
+              app.$.client.signOut();
+              page('/');
+              return;
             }
             next();
           });
+        } else {
+          next();
         }
-      }
-      
-      /**
-       * Load the person for the view
-       */
-      function loadPerson(context, next){
-        
-        // Set the person ID for elements that need it to request related resources
-        app.personId = context.params.personId;
-        
-        // Load the person for elements that we can pass the person too. This prevents
-        // them from duplicating person requests
-        app.loading = true;
-        client.get('/platform/tree/persons/' + context.params.personId, function(error, response){
-          if(error){
-            console.error(error);
-          } else if(response && response.statusCode === 200){
-            app.person = response.data.persons[0];
-            $history.addPerson(app.person);
-          }
-          app.loading = false;
-        });
       }
     }
     

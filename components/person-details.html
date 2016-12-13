@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/fs-person-summary/fs-person-summary.html">
+<link rel="import" href="../bower_components/fs-person-families/fs-person-families.html">
+<link rel="import" href="../bower_components/fs-person-facts/fs-person-facts.html">
+<link rel="import" href="../bower_components/fs-person-sources/fs-person-sources.html">
+<link rel="import" href="../bower_components/fs-person-behavior/fs-person-behavior.html">
+
+<dom-module id="person-details">
+  <template>
+    <style>
+      fs-person-families {
+        --fs-person-chip-hover: {
+          cursor: pointer;
+        }
+      }
+      
+      #person-header {
+        display: block;
+      }
+    </style>
+    <fs-client></fs-client>
+    <paper-card id="person-header">
+      <div class="card-content">
+        <fs-person-summary person="[[person]]"></fs-person-summary>
+      </div>
+    </paper-card>
+    <div>
+      <h3>Facts</h3>
+      <fs-person-facts person="[[person]]"></fs-person-facts>
+    </div>
+    <div id="family">
+      <h3>Family</h3>
+      <fs-person-families person-id="[[personId]]"></fs-person-families>
+    </div>
+    <div>
+      <h3>Sources</h3>
+      <fs-person-sources person-id="[[personId]]"></fs-person-sources>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    
+    is: 'person-details',
+    
+    behaviors: [FSPersonBehavior]
+    
+  });
+</script>
