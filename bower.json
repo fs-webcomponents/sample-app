@@ -28,6 +28,7 @@
     "fs-person-facts": "fs-webcomponents/fs-person-facts#^1.1.1",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.4.3",
     "paper-listbox": "^1.1.2",
-    "fs-person-sources": "fs-webcomponents/fs-person-sources#^1.0.0"
+    "fs-person-sources": "fs-webcomponents/fs-person-sources#^1.0.0",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.2.1"
   }
 }

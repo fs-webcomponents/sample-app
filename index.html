@@ -12,17 +12,25 @@
   <body>
     <template is="dom-bind" id="app">
       <style is="custom-style">
+        paper-toolbar {
+          --paper-toolbar-background: var(--google-green-500);
+        }
+        
         fs-person-families {
           --fs-person-chip-hover: {
             cursor: pointer;
           }
+        }
+        
+        paper-spinner-lite {
+          --paper-spinner-color: var(--google-green-500);
         }
       </style>
       
       <fs-client id="client" app-key="a02j00000099Mc2AAE" redirect-uri="/" save-access-token reload-after-code="."></fs-client>
       
       <paper-toolbar>
-        <div class="title">Sample App</div>
+        <div class="title"><a href="/">Sample App</a></div>
         <span id="username">[[user.username]]</span>
         <person-history></person-history>
         <fs-signin></fs-signin>
@@ -49,6 +57,9 @@
           <h3>Sources</h3>
           <fs-person-sources person-id="[[personId]]"></fs-person-sources>
         </div>
+      </div>
+      <div id="loader" hidden$="{{!loading}}">
+        <paper-spinner-lite active></paper-spinner>
       </div>
     </template>
     

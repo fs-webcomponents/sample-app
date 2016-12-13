@@ -4,6 +4,8 @@ window.addEventListener('WebComponentsReady', function() {
       $client = document.getElementById('client'),
       $history = document.querySelector('person-history'),
       client = $client.client;
+      
+  app.loading = false;
   
   page('/person/:personId', ensureAuth, loadUser, loadPerson);
   page('/person', ensureAuth, loadUser, function(){
@@ -62,11 +64,16 @@ window.addEventListener('WebComponentsReady', function() {
    */
   function loadUser(context, next){
     if(!app.username){
+      app.loading = true;
       client.get('/platform/users/current', function(error, response){
+        app.loading = false;
         if(error){
           console.error(error);
         } else if(response && response.statusCode === 200){
           app.user = response.data.users[0];
+        } else if(response && response.statusCode === 401){
+          $client.signOut();
+          return page('/');
         }
         next();
       });
@@ -83,6 +90,7 @@ window.addEventListener('WebComponentsReady', function() {
     
     // Load the person for elements that we can pass the person too. This prevents
     // them from duplicating person requests
+    app.loading = true;
     client.get('/platform/tree/persons/' + context.params.personId, function(error, response){
       if(error){
         console.error(error);
@@ -90,6 +98,7 @@ window.addEventListener('WebComponentsReady', function() {
         app.person = response.data.persons[0];
         $history.addPerson(app.person);
       }
+      app.loading = false;
     });
   }
 
