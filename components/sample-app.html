@@ -196,7 +196,7 @@
     
     _routeMiddleware: {
       ensureAuth: function(context, next){
-        if(!app.isAuthenticated()){
+        if(!this.isAuthenticated()){
           page('/');
         } else {
           next();
