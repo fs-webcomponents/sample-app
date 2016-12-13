@@ -39,6 +39,12 @@ paper-toolbar .title a {
   text-align: center;
 }
 
+#welcome img {
+  height: 600px;
+  margin: auto;
+  margin-top: 64px;
+}
+
 #person-header {
   display: block;
 }
