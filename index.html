@@ -33,7 +33,7 @@
         }
       </style>
       
-      <fs-client id="client" app-key="a02j00000099Mc2AAE" redirect-uri="/" save-access-token reload-after-code="."></fs-client>
+      <fs-client id="client" app-key="a02j00000099Mc2AAE" redirect-uri="/" save-access-token reload-after-code="." authenticated="{{authenticated}}"></fs-client>
       
       <paper-toolbar>
         <div class="title"><a href="/">Sample App</a></div>
@@ -43,28 +43,42 @@
       </paper-toolbar>
       
       <div id="main" class="container">
-        <paper-card id="person-header">
-          <div class="card-content">
-            <fs-person-summary person="[[person]]"></fs-person-summary>
+        
+        <div id="welcome" hidden$="[[authenticated]]">
+          <h1>FamilySearch Web Components Sample App</h1>
+          <fs-signin></fs-signin>
+        </div>
+        
+        <div id="person" hidden$="[[!authenticated]]">
+          <paper-card id="person-header">
+            <div class="card-content">
+              <fs-person-summary person="[[person]]"></fs-person-summary>
+            </div>
+          </paper-card>
+          <div>
+            <h3>Facts</h3>
+            <fs-person-facts person="[[person]]"></fs-person-facts>
           </div>
-        </paper-card>
-        
-        <div>
-          <h3>Facts</h3>
-          <fs-person-facts person="[[person]]"></fs-person-facts>
+          <div id="family">
+            <h3>Family</h3>
+            <fs-person-families person-id="[[personId]]"></fs-person-families>
+          </div>
+          <div>
+            <h3>Sources</h3>
+            <fs-person-sources person-id="[[personId]]"></fs-person-sources>
+          </div>
         </div>
         
-        <div id="family">
-          <h3>Family</h3>
-          <fs-person-families person-id="[[personId]]"></fs-person-families>
-        </div>
-        
-        <div>
-          <h3>Sources</h3>
-          <fs-person-sources person-id="[[personId]]"></fs-person-sources>
-        </div>
       </div>
-      <div id="loader" hidden$="{{!loading}}">
+      
+      <div id="footer">
+        <p>
+          <a href="https://github.com/fs-webcomponents/sample-app" target="_blank">Source Code on GitHub</a> |
+          <a href="https://www.polymer-project.org/1.0/" target="_blank">Built with Polymer</a>
+        </p>
+      </div>
+      
+      <div id="loader" hidden$="[[!loading]]">
         <paper-spinner-lite active></paper-spinner>
       </div>
     </template>

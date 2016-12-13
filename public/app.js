@@ -1,20 +1,24 @@
 window.addEventListener('WebComponentsReady', function() {
   
-  var app = document.getElementById('app'),
+  var $app = document.getElementById('app'),
       $client = document.getElementById('client'),
       $history = document.querySelector('person-history'),
       client = $client.client;
       
-  app.loading = false;
+  $app.loading = false;
   
   page('/person/:personId', ensureAuth, loadUser, loadPerson);
   page('/person', ensureAuth, loadUser, function(){
-    page('/person/' + app.user.personId);
+    page('/person/' + $app.user.personId);
   });
   
-  // Forward to /person by default to load the current user person's page
+  // When signed in, forward to /person by default to load the current user
+  // so that we then know who the start person is.
+  // When signed out, show a welcome message.
   page('/', function(){
-    page('/person');
+    if($client.authenticated){
+      page('/person');
+    }
   });
   
   // Use hashbangs to get a one page app.
@@ -24,9 +28,9 @@ window.addEventListener('WebComponentsReady', function() {
   // Reset app state on logout
   $client.addEventListener('authenticated-changed', function(event){
     if(!event.detail.value){
-      app.person = undefined;
-      app.personId = '';
-      app.user = {};
+      $app.person = undefined;
+      $app.personId = '';
+      $app.user = {};
       $history.clear();
       page('/');
     }
@@ -64,14 +68,14 @@ window.addEventListener('WebComponentsReady', function() {
    * We might also need the current user's person id.
    */
   function loadUser(context, next){
-    if(!app.username){
-      app.loading = true;
+    if(!$app.username){
+      $app.loading = true;
       client.get('/platform/users/current', function(error, response){
-        app.loading = false;
+        $app.loading = false;
         if(error){
           console.error(error);
         } else if(response && response.statusCode === 200){
-          app.user = response.data.users[0];
+          $app.user = response.data.users[0];
         } else if(response && response.statusCode === 401){
           $client.signOut();
           return page('/');
@@ -87,19 +91,19 @@ window.addEventListener('WebComponentsReady', function() {
   function loadPerson(context, next){
     
     // Set the person ID for elements that need it to request related resources
-    app.personId = context.params.personId;
+    $app.personId = context.params.personId;
     
     // Load the person for elements that we can pass the person too. This prevents
     // them from duplicating person requests
-    app.loading = true;
+    $app.loading = true;
     client.get('/platform/tree/persons/' + context.params.personId, function(error, response){
       if(error){
         console.error(error);
       } else if(response && response.statusCode === 200){
-        app.person = response.data.persons[0];
-        $history.addPerson(app.person);
+        $app.person = response.data.persons[0];
+        $history.addPerson($app.person);
       }
-      app.loading = false;
+      $app.loading = false;
     });
   }
 
