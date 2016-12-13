@@ -1,0 +1,280 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<script src="/bower_components/page/page.js"></script>
+
+<!-- Paper Elements -->
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
+
+<!-- FamilySearch Components -->
+<link rel="import" href="../bower_components/fs-client/fs-client.html">
+<link rel="import" href="../bower_components/fs-signin/fs-signin.html">
+<link rel="import" href="../bower_components/fs-person-summary/fs-person-summary.html">
+<link rel="import" href="../bower_components/fs-person-families/fs-person-families.html">
+<link rel="import" href="../bower_components/fs-person-facts/fs-person-facts.html">
+<link rel="import" href="../bower_components/fs-person-sources/fs-person-sources.html">
+
+<!-- Custom Components -->
+<link rel="import" href="person-history.html">
+
+<dom-module id="sample-app">
+  <template>
+    <style>
+      paper-toolbar {
+        --paper-toolbar-background: var(--google-green-500);
+        margin-bottom: 16px;
+      }
+      
+      paper-toolbar .title a {
+        color: white;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      
+      fs-signin {
+        --fs-signin-signin: {
+          background-color: var(--google-red-500);
+        }
+      }
+      
+      fs-person-families {
+        --fs-person-chip-hover: {
+          cursor: pointer;
+        }
+      }
+      
+      .container {
+        max-width: 900px;
+        margin: auto;
+      }
+      
+      #main {
+        padding-bottom: 32px;
+        flex: 1;
+      }
+      
+      #username {
+        margin: 0 16px;
+      }
+      
+      #welcome {
+        text-align: center;
+      }
+      
+      #welcome img {
+        height: 600px;
+        margin: auto;
+        margin-top: 64px;
+      }
+      
+      #person-header {
+        display: block;
+      }
+      
+      #loader {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0,0,0,.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      paper-spinner-lite {
+        --paper-spinner-color: var(--google-green-500);
+      }
+      
+      #footer {
+        text-align: right;
+        padding-right: 32px;
+      }
+      
+      #footer a,
+      #footer a:visited {
+        color: #42A5F5;
+        text-decoration: none;
+      }
+    </style>
+    
+    <fs-client id="client" app-key="a02j00000099Mc2AAE" redirect-uri="/" save-access-token reload-after-code="." authenticated="{{authenticated}}"></fs-client>
+    
+    <paper-toolbar>
+      <div class="title"><a href="/">Sample App</a></div>
+      <span id="username">[[user.username]]</span>
+      <person-history id="history"></person-history>
+      <fs-signin></fs-signin>
+    </paper-toolbar>
+    
+    <div id="main">
+      
+      <div class="container">
+        <div id="welcome" hidden$="[[authenticated]]">
+          <h1>FamilySearch Web Components Sample App</h1>
+          <fs-signin></fs-signin>
+          <div><img src="/public/fs-wc-screenshot.png" /></div>
+        </div>
+        
+        <div id="person" hidden$="[[!authenticated]]">
+          <paper-card id="person-header">
+            <div class="card-content">
+              <fs-person-summary person="[[person]]"></fs-person-summary>
+            </div>
+          </paper-card>
+          <div>
+            <h3>Facts</h3>
+            <fs-person-facts person="[[person]]"></fs-person-facts>
+          </div>
+          <div id="family">
+            <h3>Family</h3>
+            <fs-person-families person-id="[[personId]]" id="families"></fs-person-families>
+          </div>
+          <div>
+            <h3>Sources</h3>
+            <fs-person-sources person-id="[[personId]]"></fs-person-sources>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <div id="footer">
+      <p>
+        <a href="https://github.com/fs-webcomponents/sample-app" target="_blank">Source Code on GitHub</a> |
+        <a href="https://www.polymer-project.org/1.0/" target="_blank">Built with Polymer</a>
+      </p>
+    </div>
+    
+    <div id="loader" hidden$="[[!loading]]">
+      <paper-spinner-lite active></paper-spinner>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'sample-app',
+    
+    properties: {
+      
+      loading: {
+        type: Boolean,
+        value: false
+      }
+      
+    },
+    
+    attached: function(){
+      var app = this,
+          $client = this.$.client,
+          $history = this.$.history,
+          client = $client.client;
+          
+      page('/person/:personId', ensureAuth, loadUser, loadPerson);
+      page('/person', ensureAuth, loadUser, function(){
+        page('/person/' + app.user.personId);
+      });
+      
+      // When signed in, forward to /person by default to load the current user
+      // so that we then know who the start person is.
+      // When signed out, show a welcome message.
+      page('/', function(){
+        if($client.authenticated){
+          page('/person');
+        }
+      });
+      
+      // Use hashbangs to get a one page app.
+      // For some reason this has to be after the route declarations.
+      page();
+      
+      // Reset app state on logout
+      $client.addEventListener('authenticated-changed', function(event){
+        if(!event.detail.value){
+          app.person = undefined;
+          app.personId = '';
+          app.user = {};
+          $history.clear();
+          page('/');
+        }
+      });
+      
+      // Listen for navigation events
+      this.$.families.addEventListener('person-tap', function(e){
+        if(e.detail.personId){
+          page('/person/' + e.detail.personId);
+        }
+      });
+      $history.addEventListener('person-select', function(e){
+        if(e.detail.personId){
+          page('/person/' + e.detail.personId);
+        }
+      });
+      
+      /**
+       * Make sure the user is authenticated.
+       */
+      function ensureAuth(context, next){
+        if(!client.getAccessToken()){
+          $client.addEventListener('authenticated-changed', function(event){
+            if(event.detail.value){
+              next();
+            }
+          });
+        } else {
+          next();
+        }
+      }
+      
+      /**
+       * Get the current user so we can show the username in the title.
+       * We might also need the current user's person id.
+       */
+      function loadUser(context, next){
+        if(!app.username){
+          app.loading = true;
+          client.get('/platform/users/current', function(error, response){
+            app.loading = false;
+            if(error){
+              console.error(error);
+            } else if(response && response.statusCode === 200){
+              app.user = response.data.users[0];
+            } else if(response && response.statusCode === 401){
+              $client.signOut();
+              return page('/');
+            }
+            next();
+          });
+        }
+      }
+      
+      /**
+       * Load the person for the view
+       */
+      function loadPerson(context, next){
+        
+        // Set the person ID for elements that need it to request related resources
+        app.personId = context.params.personId;
+        
+        // Load the person for elements that we can pass the person too. This prevents
+        // them from duplicating person requests
+        app.loading = true;
+        client.get('/platform/tree/persons/' + context.params.personId, function(error, response){
+          if(error){
+            console.error(error);
+          } else if(response && response.statusCode === 200){
+            app.person = response.data.persons[0];
+            $history.addPerson(app.person);
+          }
+          app.loading = false;
+        });
+      }
+    }
+    
+  });
+
+</script>
