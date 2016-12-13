@@ -27,9 +27,9 @@
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.0.4",
     "fs-person-facts": "fs-webcomponents/fs-person-facts#^1.1.1",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.4.3",
-    "paper-listbox": "^1.1.2",
     "fs-person-sources": "fs-webcomponents/fs-person-sources#^1.1.0",
     "paper-spinner": "PolymerElements/paper-spinner#^1.2.1",
-    "fs-person-behavior": "fs-webcomponents/fs-person-behavior#^1.0.0"
+    "fs-person-behavior": "fs-webcomponents/fs-person-behavior#^1.0.0",
+    "paper-listbox": "PolymerElements/paper-listbox#^1.1.2"
   }
 }
