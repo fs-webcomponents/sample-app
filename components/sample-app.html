@@ -171,7 +171,7 @@
       page();
       
       // Handle sign in and sign out actions. We can't use the fs-client redirect
-      // properties because our router won't notice them and response appropriately
+      // properties because our router won't notice them and respond appropriately
       // so we must manually handle them and tell our router where to go.
       app.$.client.addEventListener('authenticated-changed', function(event){
         
