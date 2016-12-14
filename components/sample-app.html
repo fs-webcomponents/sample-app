@@ -138,33 +138,60 @@
       
     },
     
+    /**
+     * Use the FSPersonBehavior to get person loading and state handling for free.
+     * FSPersonBehavior will automatically load a person when we change the personId
+     * property. It tracks loading state and fires notifications when the person
+     * is available. The app sets the ID, waits for the person to load, then
+     * passes the person on to the person-details component so that the person
+     * is only loaded once.
+     */
     behaviors: [FSPersonBehavior],
     
     observers: [
       '_personChanged(person)'
     ],
     
-    attached: function(){
+    /**
+     * This method is called when the component and it's children have been
+     * setup. This method is guaranteed to only be called once.
+     * https://www.polymer-project.org/1.0/docs/devguide/registering-elements#lifecycle-callbacks
+     */
+    ready: function(){
       this._routerSetup();
       
       // Listen for authentication events
       this.$.client.addEventListener('authenticated-changed', this._authenticatedChanged.bind(this));
       
-      // Listen for navigation events
+      // Navigate to a person when they are clicked on in the family area.
+      // These events bubble up from `fs-person-families`.
       this.$.personDetails.addEventListener('person-tap', this._personSelected);
+      
+      // Navigate to a person when selected from the history dropdown.
       this.$.history.addEventListener('person-select', this._personSelected);
     },
     
+    /**
+     * Used to calculate when the loading indicator should load.
+     */
     _isLoading: function(personLoading, userLoading){
       return personLoading || userLoading;
     },
     
+    /**
+     * Add a person to the history list when the person object is available.
+     * We wait for the person object (as opposed to just using the ID) so that
+     * we can display the person's name in the history list.
+     */
     _personChanged: function(person){
       if(person){
         this.$.history.addPerson(person);
       }
     },
     
+    /**
+     * Navigate to a new person page. This is a shared event handler.
+     */
     _personSelected: function(e){
       if(e.detail.personId){
         page('/person/' + e.detail.personId);
