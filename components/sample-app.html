@@ -84,8 +84,7 @@
     </style>
     
     <fs-client id="client" app-key="a02j00000099Mc2AAE" redirect-uri="/" 
-               save-access-token exchange-code redirect-after-sign-in="." 
-               update-history-state authenticated="{{authenticated}}"></fs-client>
+               save-access-token exchange-code authenticated="{{authenticated}}"></fs-client>
     
     <paper-toolbar>
       <div class="title"><a href="/">Sample App</a></div>
@@ -171,9 +170,18 @@
       // For some reason this has to be after the route declarations.
       page();
       
-      // Reset app state on logout
+      // Handle sign in and sign out actions. We can't use the fs-client redirect
+      // properties because our router won't notice them and response appropriately
+      // so we must manually handle them and tell our router where to go.
       app.$.client.addEventListener('authenticated-changed', function(event){
-        if(!event.detail.value){
+        
+        // Sign in
+        if(event.detail.value) {
+          page('/person');
+        } 
+        
+        // Sign out
+        else {
           app.person = undefined;
           app.personId = '';
           app.user = {};
