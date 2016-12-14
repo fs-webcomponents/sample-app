@@ -1,9 +1,8 @@
 # FamilySearch Web Component Sample App
 
 Sample app built using [Polymer](https://www.polymer-project.org) and the 
-[FamilySearch web components](https://github.com/fs-webcomponents).
-
-The sample app is available at https://fs-wc-sample-app.herokuapp.com/.
+[FamilySearch web components](https://github.com/fs-webcomponents). The app is 
+running at https://fs-wc-sample-app.herokuapp.com/.
 
 This simple app is not meant to be a tutorial on using Polymer. It is expected
 that you learn about Polymer first. This app is a demonstration of how the
