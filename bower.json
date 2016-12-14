@@ -22,7 +22,7 @@
     "fs-signin": "fs-webcomponents/fs-signin#^2.0.0",
     "fs-person-chip": "fs-webcomponents/fs-person-chip#^2.0.0",
     "fs-person-summary": "fs-webcomponents/fs-person-summary#^2.0.0",
-    "fs-person-families": "fs-webcomponents/fs-person-families#^2.0.0",
+    "fs-person-families": "fs-webcomponents/fs-person-families#^2.0.1",
     "paper-card": "PolymerElements/paper-card#^1.0.5",
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.0.4",
     "fs-person-facts": "fs-webcomponents/fs-person-facts#^2.0.0",
