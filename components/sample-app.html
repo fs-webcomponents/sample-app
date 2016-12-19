@@ -142,7 +142,8 @@
       
       loading: {
         type: Boolean,
-        computed: '_isLoading(personLoading, userLoading, personDetailsLoading)'
+        computed: '_isLoading(personLoading, userLoading, personDetailsLoading)',
+        observer: '_loadingChanged'
       },
       
       userLoading: {
@@ -206,6 +207,17 @@
      */
     _isLoading: function(personLoading, userLoading, personDetailsLoading){
       return personLoading || userLoading || personDetailsLoading;
+    },
+    
+    /**
+     * Freeze window scroll when loading
+     */
+    _loadingChanged: function(loading){
+      if(loading){
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = 'auto';
+      }
     },
     
     /**
