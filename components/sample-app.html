@@ -76,6 +76,10 @@
         --paper-spinner-color: var(--google-green-500);
       }
       
+      fs-pedigree {
+        --fs-pedigree-person-width: 200px;
+      }
+      
       #footer {
         text-align: right;
         padding-right: 32px;
@@ -110,7 +114,7 @@
           <paper-button on-tap="_togglePage">[[_navButtonText(page)]]</paper-button>
         </div>
         <person-details id="personDetails" person="[[person]]" hidden$="[[!_showPersonDetails(authenticated, page)]]"></person-details>
-        <fs-pedigree person-id="[[personId]]" hidden$="[[!_showPedigree(authenticated, page)]]"></fs-pedigree>
+        <fs-pedigree id="pedigree" person-id="[[personId]]" hidden$="[[!_showPedigree(authenticated, page)]]"></fs-pedigree>
       </div>
       
     </div>
@@ -183,10 +187,13 @@
       
       // Navigate to a person when they are clicked on in the family area.
       // These events bubble up from `fs-person-families`.
-      this.$.personDetails.addEventListener('person-tap', this._personSelected);
+      this.$.personDetails.addEventListener('person-tap', this._personSelected.bind(this));
+      
+      // Navigate to a person's pedigree when they are clicked on in the pedigree.
+      this.$.pedigree.addEventListener('person-tap', this._personSelected.bind(this));
       
       // Navigate to a person when selected from the history dropdown.
-      this.$.history.addEventListener('person-select', this._personSelected);
+      this.$.history.addEventListener('person-select', this._personSelected.bind(this));
     },
     
     /**
@@ -212,7 +219,7 @@
      */
     _personSelected: function(e){
       if(e.detail.personId){
-        page('/person/' + e.detail.personId);
+        page('/' + this.page + '/' + e.detail.personId);
       }
     },
     
