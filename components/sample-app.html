@@ -257,9 +257,9 @@
      */
     _togglePage: function(){
       if(this.page === 'person'){
-        this.page = 'pedigree';
+        page('/pedigree/' + this.personId);
       } else {
-        this.page = 'person';
+        page('/person/' + this.personId);
       }
     },
     
@@ -279,12 +279,17 @@
       var app = this,
           loadUser = this._routeMiddleware.loadUser.bind(this),
           ensureAuth = this._routeMiddleware.ensureAuth.bind(this);
-          
-      page('/person/:personId', ensureAuth, function(context){
-        app.personId = context.params.personId;
-      });
+      
       page('/person', ensureAuth, loadUser, function(){
         page.redirect('/person/' + app.user.personId);
+      });
+      page('/person/:personId', ensureAuth, function(context){
+        app.personId = context.params.personId;
+        app.page = 'person';
+      });
+      page('/pedigree/:personId', function(context){
+        app.personId = context.params.personId;
+        app.page = 'pedigree';
       });
       
       // When signed in, forward to /person by default to load the current user

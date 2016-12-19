@@ -4,7 +4,7 @@
  */
 
 var serverFactory = require('spa-server');
-var matcher = /\/person/; 
+var matcher = /^\/(person|pedigree)/; 
 var server = serverFactory.create({
   port: process.env.PORT || 8080,
   
