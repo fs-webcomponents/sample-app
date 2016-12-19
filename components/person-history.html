@@ -33,8 +33,8 @@ Basic example:
         }
       }
     </style>
-    <paper-dropdown-menu label="History" no-label-float horizontalAlign="left">
-      <paper-listbox class="dropdown-content">
+    <paper-dropdown-menu label="History" no-label-float horizontal-align="left">
+      <paper-listbox id="list" class="dropdown-content">
         <template is="dom-repeat" items="{{persons}}">
           <paper-item label="{{item.display.name}}" on-tap="_selectPerson">
             <paper-item-body two-line>
@@ -76,17 +76,22 @@ Basic example:
           this.pop('persons');
         }  
       }
+      this.$.list.select(this._indexOf(person));
     },
     
     _containsPerson: function(person){
-      var personId = person.id,
-          contains, i;
-      for(i = 0, contains = false; i < this.persons.length && !contains; i++){
+      var index = this._indexOf(person);
+      return index >= 0; 
+    },
+    
+    _indexOf: function(person){
+      var personId = person.id;
+      for(var i = 0; i < this.persons.length; i++){
         if(this.persons[i].id === personId){
-          contains = true;
+          return i;
         }
       }
-      return contains;
+      return -1;
     },
     
     _selectPerson: function(event){
