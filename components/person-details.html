@@ -31,11 +31,11 @@
     </div>
     <div id="family">
       <h3>Family</h3>
-      <fs-person-families person-id="[[personId]]"></fs-person-families>
+      <fs-person-families loading="{{familiesLoading}}" person-id="[[personId]]"></fs-person-families>
     </div>
     <div>
       <h3>Sources</h3>
-      <fs-person-sources person-id="[[personId]]"></fs-person-sources>
+      <fs-person-sources loading="{{sourcesLoading}}" person-id="[[personId]]"></fs-person-sources>
     </div>
   </template>
 </dom-module>
@@ -45,7 +45,32 @@
     
     is: 'person-details',
     
-    behaviors: [FSPersonBehavior]
+    properties: {
+      
+      familiesLoading: {
+        type: Boolean,
+        value: false
+      },
+      
+      sourcesLoading: {
+        type: Boolean,
+        value: false
+      },
+      
+      loading: {
+        type: Boolean,
+        readOnly: true,
+        notify: true,
+        computed: '_isLoading(familiesLoading, sourcesLoading)'
+      }
+      
+    },
+    
+    behaviors: [FSPersonBehavior],
+    
+    _isLoading: function(familiesLoading, sourcesLoading){
+      return familiesLoading || sourcesLoading;
+    }
     
   });
 </script>

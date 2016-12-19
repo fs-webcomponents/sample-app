@@ -113,7 +113,7 @@
         <div id="person-nav-toolbar">
           <paper-button on-tap="_togglePage">[[_navButtonText(page)]]</paper-button>
         </div>
-        <person-details id="personDetails" person="[[person]]" hidden$="[[!_showPersonDetails(authenticated, page)]]"></person-details>
+        <person-details id="personDetails" person="[[person]]" hidden$="[[!_showPersonDetails(authenticated, page)]]" loading="{{personDetailsLoading}}"></person-details>
         <fs-pedigree id="pedigree" person-id="[[personId]]" hidden$="[[!_showPedigree(authenticated, page)]]"></fs-pedigree>
       </div>
       
@@ -142,10 +142,15 @@
       
       loading: {
         type: Boolean,
-        computed: '_isLoading(personLoading, userLoading)'
+        computed: '_isLoading(personLoading, userLoading, personDetailsLoading)'
       },
       
       userLoading: {
+        type: Boolean,
+        value: false
+      },
+      
+      personDetailsLoading: {
         type: Boolean,
         value: false
       },
@@ -199,8 +204,8 @@
     /**
      * Used to calculate when the loading indicator should load.
      */
-    _isLoading: function(personLoading, userLoading){
-      return personLoading || userLoading;
+    _isLoading: function(personLoading, userLoading, personDetailsLoading){
+      return personLoading || userLoading || personDetailsLoading;
     },
     
     /**
