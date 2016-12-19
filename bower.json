@@ -30,9 +30,8 @@
     "fs-person-sources": "fs-webcomponents/fs-person-sources#^2.0.0",
     "paper-spinner": "PolymerElements/paper-spinner#^1.2.1",
     "fs-person-behavior": "fs-webcomponents/fs-person-behavior#^2.0.0",
-    "paper-listbox": "PolymerElements/paper-listbox#^1.1.2"
-  },
-  "resolutions": {
-    "fs-client": "v2"
+    "paper-listbox": "PolymerElements/paper-listbox#^1.1.2",
+    "fs-pedigree": "fs-webcomponents/fs-pedigree#^1.0.0",
+    "paper-button": "PolymerElements/paper-button#^1.0.14"
   }
 }

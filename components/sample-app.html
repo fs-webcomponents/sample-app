@@ -9,6 +9,7 @@
 <link rel="import" href="../bower_components/fs-client/fs-client.html">
 <link rel="import" href="../bower_components/fs-signin/fs-signin.html">
 <link rel="import" href="../bower_components/fs-person-behavior/fs-person-behavior.html">
+<link rel="import" href="../bower_components/fs-pedigree/fs-pedigree.html">
 
 <!-- Custom Sample App Components -->
 <link rel="import" href="person-history.html">
@@ -52,6 +53,11 @@
         height: 600px;
         margin: auto;
         margin-top: 64px;
+      }
+      
+      #person-nav-toolbar {
+        text-align: right;
+        margin-bottom: 1em;
       }
       
       #loader {
@@ -100,7 +106,11 @@
           <div><img src="/public/fs-wc-screenshot.png" /></div>
         </div>
         
-        <person-details id="personDetails" person="[[person]]" hidden$="[[!authenticated]]"></person-details>
+        <div id="person-nav-toolbar">
+          <paper-button on-tap="_togglePage">[[_navButtonText(page)]]</paper-button>
+        </div>
+        <person-details id="personDetails" person="[[person]]" hidden$="[[!_showPersonDetails(authenticated, page)]]"></person-details>
+        <fs-pedigree person-id="[[personId]]" hidden$="[[!_showPedigree(authenticated, page)]]"></fs-pedigree>
       </div>
       
     </div>
@@ -134,6 +144,14 @@
       userLoading: {
         type: Boolean,
         value: false
+      },
+      
+      /**
+       * Supported values are 'person' and 'pedigree'
+       */
+      page: {
+        type: String,
+        value: 'person'
       }
       
     },
@@ -217,6 +235,39 @@
         this.user = {};
         this.$.history.clear();
         page('/');
+      }
+    },
+    
+    /**
+     * Decided whether the person-details section should be displayed.
+     */
+    _showPersonDetails: function(authenticated, page){
+      return authenticated && page === 'person';
+    },
+    
+    /**
+     * Decided whether the pedigree section should be displayed.
+     */
+    _showPedigree: function(authenticated, page){
+      return authenticated && page === 'pedigree';
+    },
+    
+    /**
+     * Toggle between the person and pedigree pages.
+     */
+    _togglePage: function(){
+      if(this.page === 'person'){
+        this.page = 'pedigree';
+      } else {
+        this.page = 'person';
+      }
+    },
+    
+    _navButtonText: function(page){
+      if(this.page === 'person'){
+        return 'Pedigree';
+      } else {
+        return 'Person';
       }
     },
     
