@@ -111,7 +111,7 @@
           <div><img src="/public/fs-wc-screenshot.png" /></div>
         </div>
         
-        <div id="person-nav-toolbar">
+        <div id="person-nav-toolbar" hidden$="[[!authenticated]]">
           <paper-button on-tap="_togglePage">[[_navButtonText(page)]]</paper-button>
         </div>
         <person-details id="personDetails" person-id="[[personId]]" hidden$="[[!_showPersonDetails(authenticated, page)]]" loading="{{personDetailsLoading}}"></person-details>
