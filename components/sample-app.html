@@ -246,7 +246,6 @@
       
       // Sign out
       else {
-        this.person = undefined;
         this.personId = '';
         this.user = {};
         this.$.history.clear();
@@ -292,9 +291,7 @@
      * we need asynchronous middleware to make sure the user is logged in.
      */
     _routerSetup: function(){
-      var app = this,
-          loadUser = this._routeMiddleware.loadUser.bind(this),
-          ensureAuth = this._routeMiddleware.ensureAuth.bind(this);
+      var app = this;
       
       page('/person', ensureAuth, loadUser, function(){
         page.redirect('/person/' + app.user.personId);
@@ -319,26 +316,24 @@
       
       // Setup event bindings and start the router.
       page();
-    },
-    
-    // Middleware used by the router. It must be run with `this` as a reference
-    // to the app component. That's achieved by using bind().
-    _routeMiddleware: {
       
-      // Make sure the user is logged in before proceeding with the route.
-      // Forward the user to the home page if they're not logged in.
-      ensureAuth: function(context, next){
-        if(!this.isAuthenticated()){
+      /**
+       * Make sure the user is logged in before proceeding with the route.
+       * Forward the user to the home page if they're not logged in.
+       */
+      function ensureAuth(context, next){
+        if(!app.isAuthenticated()){
           page('/');
         } else {
           next();
         }
-      },
+      }
       
-      // Load the current user if it isn't already available. The current user
-      // is required for knowing who the start person is.
-      loadUser: function(context, next){
-        var app = this;
+      /**
+       * Load the current user if it isn't already available. The current user
+       * is required for knowing who the start person is.
+       */
+      function loadUser(context, next){
         if(!app.user){
           app.userLoading = true;
           app.getClient().get('/platform/users/current', function(error, response){
