@@ -3,6 +3,8 @@
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/fs-client/fs-client.html">
+<link rel="import" href="../bower_components/fs-behavior/fs-behavior.html">
 
 <!--
 List the 10 most recent persons the user has viewed.
@@ -33,6 +35,7 @@ Basic example:
         }
       }
     </style>
+    <fs-client></fs-client>
     <paper-dropdown-menu label="History" no-label-float horizontal-align="left">
       <paper-listbox id="list" class="dropdown-content">
         <template is="dom-repeat" items="{{persons}}">
@@ -65,27 +68,33 @@ Basic example:
       
     },
     
+    behaviors: [FSBehavior],
+    
     clear: function(){
       this.persons = [];
     },
     
-    addPerson: function(person){
-      if(!this._containsPerson(person)){
-        this.unshift('persons', person);
-        while(this.persons.length > 10){
-          this.pop('persons');
-        }  
+    addPerson: function(personId){
+      var self = this;
+      if(!this._containsPerson(personId)){
+        this.getClient().get('/platform/tree/persons/' + personId, function(error, response){
+          if(response && response.statusCode === 200){
+            self.unshift('persons', response.data.persons[0]);
+            while(self.persons.length > 10){
+              self.pop('persons');
+            }
+          self.$.list.select(self._indexOf(personId));
+          }
+        });
       }
-      this.$.list.select(this._indexOf(person));
     },
     
-    _containsPerson: function(person){
-      var index = this._indexOf(person);
+    _containsPerson: function(personId){
+      var index = this._indexOf(personId);
       return index >= 0; 
     },
     
-    _indexOf: function(person){
-      var personId = person.id;
+    _indexOf: function(personId){
       for(var i = 0; i < this.persons.length; i++){
         if(this.persons[i].id === personId){
           return i;

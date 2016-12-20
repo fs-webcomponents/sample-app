@@ -93,7 +93,8 @@
     </style>
     
     <fs-client id="client" app-key="a02j00000099Mc2AAE" redirect-uri="/" 
-               save-access-token exchange-code authenticated="{{authenticated}}"></fs-client>
+               save-access-token exchange-code authenticated="{{authenticated}}"
+               debounce-duplicates></fs-client>
     
     <paper-toolbar>
       <div class="title"><a href="/">Sample App</a></div>
@@ -113,7 +114,7 @@
         <div id="person-nav-toolbar">
           <paper-button on-tap="_togglePage">[[_navButtonText(page)]]</paper-button>
         </div>
-        <person-details id="personDetails" person="[[person]]" hidden$="[[!_showPersonDetails(authenticated, page)]]" loading="{{personDetailsLoading}}"></person-details>
+        <person-details id="personDetails" person-id="[[personId]]" hidden$="[[!_showPersonDetails(authenticated, page)]]" loading="{{personDetailsLoading}}"></person-details>
         <fs-pedigree id="pedigree" person-id="[[personId]]" hidden$="[[!_showPedigree(authenticated, page)]]"></fs-pedigree>
       </div>
       
@@ -140,9 +141,14 @@
     
     properties: {
       
+      personId: {
+        type: String,
+        observer: '_personIdChanged'
+      },
+      
       loading: {
         type: Boolean,
-        computed: '_isLoading(personLoading, userLoading, personDetailsLoading)',
+        computed: '_isLoading(userLoading, personDetailsLoading)',
         observer: '_loadingChanged'
       },
       
@@ -166,19 +172,7 @@
       
     },
     
-    /**
-     * Use the FSPersonBehavior to get person loading and state handling for free.
-     * FSPersonBehavior will automatically load a person when we change the personId
-     * property. It tracks loading state and fires notifications when the person
-     * is available. The app sets the ID, waits for the person to load, then
-     * passes the person on to the person-details component so that the person
-     * is only loaded once.
-     */
-    behaviors: [FSPersonBehavior],
-    
-    observers: [
-      '_personChanged(person)'
-    ],
+    behaviors: [FSBehavior],
     
     /**
      * This method is called when the component and it's children have been
@@ -221,13 +215,11 @@
     },
     
     /**
-     * Add a person to the history list when the person object is available.
-     * We wait for the person object (as opposed to just using the ID) so that
-     * we can display the person's name in the history list.
+     * Add the personId to the history list when it's available.
      */
-    _personChanged: function(person){
-      if(person){
-        this.$.history.addPerson(person);
+    _personIdChanged: function(personId){
+      if(personId){
+        this.$.history.addPerson(personId);
       }
     },
     
@@ -311,7 +303,7 @@
         app.personId = context.params.personId;
         app.page = 'person';
       });
-      page('/pedigree/:personId', function(context){
+      page('/pedigree/:personId', ensureAuth, function(context){
         app.personId = context.params.personId;
         app.page = 'pedigree';
       });

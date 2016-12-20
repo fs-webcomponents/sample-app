@@ -22,12 +22,12 @@
     <fs-client></fs-client>
     <paper-card id="person-header">
       <div class="card-content">
-        <fs-person-summary person="[[person]]"></fs-person-summary>
+        <fs-person-summary person-loading="{{summaryLoading}}" person-id="[[personId]]"></fs-person-summary>
       </div>
     </paper-card>
     <div>
       <h3>Facts</h3>
-      <fs-person-facts person="[[person]]"></fs-person-facts>
+      <fs-person-facts person-loading="{{factsLoading}}" person-id="[[personId]]"></fs-person-facts>
     </div>
     <div id="family">
       <h3>Family</h3>
@@ -47,6 +47,8 @@
     
     properties: {
       
+      personId: String,
+      
       familiesLoading: {
         type: Boolean,
         value: false
@@ -57,19 +59,27 @@
         value: false
       },
       
+      factsLoading: {
+        type: Boolean,
+        value: false
+      },
+      
+      summaryLoading: {
+        type: Boolean,
+        value: false
+      },
+      
       loading: {
         type: Boolean,
         readOnly: true,
         notify: true,
-        computed: '_isLoading(familiesLoading, sourcesLoading)'
+        computed: '_isLoading(summaryLoading, factsLoading, familiesLoading, sourcesLoading)'
       }
       
     },
     
-    behaviors: [FSPersonBehavior],
-    
-    _isLoading: function(familiesLoading, sourcesLoading){
-      return familiesLoading || sourcesLoading;
+    _isLoading: function(summaryLoading, factsLoading, familiesLoading, sourcesLoading){
+      return summaryLoading || factsLoading || familiesLoading || sourcesLoading;
     }
     
   });
