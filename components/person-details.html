@@ -5,6 +5,13 @@
 <link rel="import" href="../bower_components/fs-person-facts/fs-person-facts.html">
 <link rel="import" href="../bower_components/fs-person-sources/fs-person-sources.html">
 
+<!--
+Small wrapper around person profile components. This acts as one control point
+between the app and the profile for passing the person ID down and for reflecting
+the loading state of the component.
+
+@element person-details
+-->
 <dom-module id="person-details">
   <template>
     <style>
@@ -18,7 +25,6 @@
         display: block;
       }
     </style>
-    <fs-client></fs-client>
     <paper-card id="person-header">
       <div class="card-content">
         <fs-person-summary person-loading="{{summaryLoading}}" person-id="[[personId]]"></fs-person-summary>
@@ -48,26 +54,42 @@
       
       personId: String,
       
+      /**
+       * Reflects the loading state of the fs-person-families element.
+       */
       familiesLoading: {
         type: Boolean,
         value: false
       },
       
+      /**
+       * Reflects the loading state of the fs-person-sources element.
+       */
       sourcesLoading: {
         type: Boolean,
         value: false
       },
       
+      /**
+       * Reflects the loading state of the fs-person-facts element.
+       */
       factsLoading: {
         type: Boolean,
         value: false
       },
       
+      /**
+       * Reflects the loading state of the fs-person-summary element.
+       */
       summaryLoading: {
         type: Boolean,
         value: false
       },
       
+      /**
+       * Loading state of the person-details. This component is in the loading
+       * state when any of it's sub-elements are loading.
+       */
       loading: {
         type: Boolean,
         readOnly: true,
