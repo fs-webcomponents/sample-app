@@ -7,7 +7,14 @@
 <link rel="import" href="../bower_components/fs-behavior/fs-behavior.html">
 
 <!--
-List the 10 most recent persons the user has viewed.
+List the 10 most recent persons the user has viewed. It works as a dropdown that
+shows the current person and lists previous ones.
+
+The list isn't persistent but it probably should be.
+
+This does _not_ use the
+[User History](https://familysearch.org/developers/docs/api/users/User_History_resource)
+API because we don't yet have a clear strategy around sending updates to the API.
 
 Basic example:
 
@@ -59,6 +66,9 @@ Basic example:
     
     properties: {
       
+      /**
+       * List of people in the history.
+       */
       persons: {
         type: Array,
         value: function(){
@@ -70,19 +80,39 @@ Basic example:
     
     behaviors: [FSBehavior],
     
+    /**
+     * Clear the list. Should probably only be used when the user signs out.
+     */
     clear: function(){
       this.persons = [];
     },
     
+    /**
+     * Add a person to the list. This component will load the person specified
+     * by the ID so that it can display the person's name.
+     * 
+     * @param {String} personId ID of the person to be added.
+     */
     addPerson: function(personId){
       var self = this;
+      
+      // TODO: when people are already in the list, move them to the top.
+      // https://github.com/fs-webcomponents/sample-app/issues/6
+      
+      // Don't add the person if they're already in the list.
       if(!this._containsPerson(personId)){
         this.getClient().get('/platform/tree/persons/' + personId, function(error, response){
           if(response && response.statusCode === 200){
+            
+            // Add the person to the front of the list.
             self.unshift('persons', response.data.persons[0]);
+            
+            // Remove people at the end of the list if it's longer than 10.
             while(self.persons.length > 10){
               self.pop('persons');
             }
+            
+            // Select the person that was added.
             self.$.list.select(self._indexOf(personId));
           }
         });
