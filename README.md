@@ -29,3 +29,6 @@ You'll see in the apps `index.html` file that the HTML body only contains a
 apps main controller. The component's file is located at `components/sample-app.html`.
 That file is heavily commented and is the best place to start for learning how
 the app works.
+
+There are two other custom components used in the app, both of which are in the
+`components` directory and are also well commented.
