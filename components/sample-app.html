@@ -247,12 +247,17 @@
      * @param {personId: string, x: Integer, y: Integer}
      */
     _showPersonCard: function(event){
+      
+      // If we have a person ID then display and position the card
       if(event.detail.personId){
         this.$.personCard.personId = event.detail.personId;
         this.$.personCard.style.display = 'block';
         this.$.personCard.style.left = event.detail.x + 'px';
         this.$.personCard.style.top = (event.detail.y + document.body.scrollTop) + 'px';
-      } else {
+      } 
+      
+      // If we don't have a person ID then hide the card
+      else {
         this.$.personCard.style.display = 'none';
       }
     },
