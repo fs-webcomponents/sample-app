@@ -140,6 +140,7 @@
       </p>
     </div>
     
+    <!-- This card is shown when people are clicked on from the family or pedigree section -->
     <fs-person-card id="personCard">
       <div class="card-actions">
         <paper-button on-tap="_navigateToProfile"><iron-icon icon="perm-identity"></iron-icon> Profile</paper-button>
@@ -147,6 +148,7 @@
       </div>
     </fs-person-card>
 
+    <!-- The loader shows when person details are loading -->
     <div id="loader" hidden$="[[!loading]]">
       <paper-spinner-lite active></paper-spinner>
     </div>
@@ -231,10 +233,12 @@
       // Hide the person card if anything else is clicked.
       this.addEventListener('tap', this._showPersonCard.bind(this));
       
-      // Navigate to a person when selected from the history dropdown.
-      this.$.history.addEventListener('person-select', this._personSelected.bind(this));
-      
-      // this.$.profileButton.addEventListener('tap', this._showPersonDetails.bind(this));
+      // Navigate to a person when they are selected from the history dropdown.
+      this.$.history.addEventListener('person-select', function(e){
+        if(e.detail.personId){
+          page('/' + this.page + '/' + e.detail.personId);
+        }
+      }.bind(this));
     },
     
     /**
@@ -291,15 +295,6 @@
     _personIdChanged: function(personId){
       if(personId){
         this.$.history.addPerson(personId);
-      }
-    },
-    
-    /**
-     * Navigate to a new person page. This is a shared event handler.
-     */
-    _personSelected: function(e){
-      if(e.detail.personId){
-        page('/' + this.page + '/' + e.detail.personId);
       }
     },
     
