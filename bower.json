@@ -22,7 +22,7 @@
     "fs-signin": "fs-webcomponents/fs-signin#^2.0.0",
     "fs-person-chip": "fs-webcomponents/fs-person-chip#^2.0.0",
     "fs-person-summary": "fs-webcomponents/fs-person-summary#^2.0.0",
-    "fs-person-families": "fs-webcomponents/fs-person-families#^2.1.0",
+    "fs-person-families": "fs-webcomponents/fs-person-families#^2.2.0",
     "paper-card": "PolymerElements/paper-card#^1.0.5",
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.0.4",
     "fs-person-facts": "fs-webcomponents/fs-person-facts#^2.0.0",
@@ -31,7 +31,10 @@
     "paper-spinner": "PolymerElements/paper-spinner#^1.2.1",
     "fs-person-behavior": "fs-webcomponents/fs-person-behavior#^2.0.0",
     "paper-listbox": "PolymerElements/paper-listbox#^1.1.2",
-    "fs-pedigree": "fs-webcomponents/fs-pedigree#^1.0.0",
-    "paper-button": "PolymerElements/paper-button#^1.0.14"
+    "fs-pedigree": "fs-webcomponents/fs-pedigree#^1.1.0",
+    "paper-button": "PolymerElements/paper-button#^1.0.14",
+    "fs-person-card": "fs-webcomponents/fs-person-card#^1.0.1",
+    "iron-icons": "PolymerElements/iron-icons#^1.2.0",
+    "iron-icon": "PolymerElements/iron-icon#^1.0.12"
   }
 }

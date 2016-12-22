@@ -4,12 +4,17 @@
 <!-- Paper Elements -->
 <link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
 
 <!-- FamilySearch Components -->
 <link rel="import" href="../bower_components/fs-client/fs-client.html">
 <link rel="import" href="../bower_components/fs-signin/fs-signin.html">
-<link rel="import" href="../bower_components/fs-person-behavior/fs-person-behavior.html">
 <link rel="import" href="../bower_components/fs-pedigree/fs-pedigree.html">
+<link rel="import" href="../bower_components/fs-person-card/fs-person-card.html">
+<link rel="import" href="../bower_components/fs-person-behavior/fs-person-behavior.html">
 
 <!-- Custom Sample App Components -->
 <link rel="import" href="person-history.html">
@@ -56,7 +61,6 @@
       }
       
       #person-nav-toolbar {
-        text-align: right;
         margin-bottom: 1em;
       }
       
@@ -78,6 +82,11 @@
       
       fs-pedigree {
         --fs-pedigree-person-width: 200px;
+      }
+      
+      fs-person-card {
+        display: none;
+        position: absolute;
       }
       
       #footer {
@@ -131,6 +140,13 @@
       </p>
     </div>
     
+    <fs-person-card id="personCard">
+      <div class="card-actions">
+        <paper-button on-tap="_navigateToProfile"><iron-icon icon="perm-identity"></iron-icon> Profile</paper-button>
+        <paper-button on-tap="_navigateToPedigree"><iron-icon icon="hardware:device-hub"></iron-icon> Pedigree</paper-button>
+      </div>
+    </fs-person-card>
+
     <div id="loader" hidden$="[[!loading]]">
       <paper-spinner-lite active></paper-spinner>
     </div>
@@ -205,15 +221,50 @@
       // Listen for authentication events
       this.$.client.addEventListener('authenticated-changed', this._authenticatedChanged.bind(this));
       
-      // Navigate to a person when they are clicked on in the family area.
+      // Show a person's card when they are clicked on in the family area.
       // These events bubble up from `fs-person-families`.
-      this.$.personDetails.addEventListener('person-tap', this._personSelected.bind(this));
+      this.$.personDetails.addEventListener('person-tap', this._showPersonCard.bind(this));
       
-      // Navigate to a person's pedigree when they are clicked on in the pedigree.
-      this.$.pedigree.addEventListener('person-tap', this._personSelected.bind(this));
+      // Show a person's card when they are clicked on in the pedigree.
+      this.$.pedigree.addEventListener('person-tap', this._showPersonCard.bind(this));
+      
+      // Hide the person card if anything else is clicked.
+      this.addEventListener('tap', this._showPersonCard.bind(this));
       
       // Navigate to a person when selected from the history dropdown.
       this.$.history.addEventListener('person-select', this._personSelected.bind(this));
+      
+      // this.$.profileButton.addEventListener('tap', this._showPersonDetails.bind(this));
+    },
+    
+    /**
+     * Show the person card.
+     * 
+     * @param {personId: string, x: Integer, y: Integer}
+     */
+    _showPersonCard: function(event){
+      if(event.detail.personId){
+        this.$.personCard.personId = event.detail.personId;
+        this.$.personCard.style.display = 'block';
+        this.$.personCard.style.left = event.detail.x + 'px';
+        this.$.personCard.style.top = (event.detail.y + document.body.scrollTop) + 'px';
+      } else {
+        this.$.personCard.style.display = 'none';
+      }
+    },
+    
+    /**
+     * Show a person's profile when the person card profile button is clicked.
+     */
+    _navigateToProfile: function(){
+      page('/person/' + this.$.personCard.personId);
+    },
+    
+    /**
+     * Show a person's pedigree when the person card pedigree button is clicked.
+     */
+    _navigateToPedigree: function(){
+      page('/pedigree/' + this.$.personCard.personId);
     },
     
     /**
@@ -376,5 +427,5 @@
     }
     
   });
-
+  
 </script>
