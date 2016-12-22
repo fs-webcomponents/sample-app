@@ -105,15 +105,19 @@
     <div id="main">
       
       <div class="container">
+        
+        <!-- content displayed when the user isn't signed in -->
         <div id="welcome" hidden$="[[authenticated]]">
           <h1>FamilySearch Web Components Sample App</h1>
           <fs-signin></fs-signin>
           <div><img src="/public/fs-wc-screenshot.png" /></div>
         </div>
         
+        <!-- when the user is signed in, this button helps them toggle between the person details and pedigree -->
         <div id="person-nav-toolbar" hidden$="[[!authenticated]]">
           <paper-button on-tap="_togglePage">[[_navButtonText(page)]]</paper-button>
         </div>
+        
         <person-details id="personDetails" person-id="[[personId]]" hidden$="[[!_showPersonDetails(authenticated, page)]]" loading="{{personDetailsLoading}}"></person-details>
         <fs-pedigree id="pedigree" person-id="[[personId]]" hidden$="[[!_showPedigree(authenticated, page)]]"></fs-pedigree>
       </div>
@@ -141,11 +145,19 @@
     
     properties: {
       
+      /**
+       * The personId is set by the routes (the routes extract if from the URL)
+       * then it's passed on to the person-history, person-details, and fs-pedigree
+       * components.
+       */
       personId: {
         type: String,
         observer: '_personIdChanged'
       },
       
+      /**
+       * True if either the user is loading or the person-details is loading.
+       */
       loading: {
         type: Boolean,
         value: false,
@@ -153,11 +165,18 @@
         observer: '_loadingChanged'
       },
       
+      /**
+       * Whether the user is being loaded.
+       */
       userLoading: {
         type: Boolean,
         value: false
       },
       
+      /**
+       * Bound to the loading attribute of the person-details component. Therefore
+       * it will reflect the person-details loading state.
+       */
       personDetailsLoading: {
         type: Boolean,
         value: false
