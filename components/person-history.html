@@ -94,36 +94,65 @@ Basic example:
      * @param {String} personId ID of the person to be added.
      */
     addPerson: function(personId){
-      var self = this;
+      var self = this,
+          index = this._indexOf(personId),
+          person;
       
-      // TODO: when people are already in the list, move them to the top.
-      // https://github.com/fs-webcomponents/sample-app/issues/6
+      // When modifying an array that is a Polymer element property which data
+      // is bound to we must use the Polymer array mutation methods so that
+      // Polymer knows the data changed and can respond accordingly.
+      // https://www.polymer-project.org/1.0/docs/devguide/model-data#work-with-arrays
       
-      // Don't add the person if they're already in the list.
-      if(!this._containsPerson(personId)){
+      // If the person is already in the history list then move them to the
+      // front of the list and mark them as selected.
+      if(index >= 0){
+        person = this.persons[index];
+        this.splice('persons', index, 1);
+        this._addPerson(person);
+      }
+      
+      // If the person isn't already in the list then we need to add them.
+      else {
         this.getClient().get('/platform/tree/persons/' + personId, function(error, response){
           if(response && response.statusCode === 200){
-            
-            // Add the person to the front of the list.
-            self.unshift('persons', response.data.persons[0]);
-            
-            // Remove people at the end of the list if it's longer than 10.
-            while(self.persons.length > 10){
-              self.pop('persons');
-            }
-            
-            // Select the person that was added.
-            self.$.list.select(self._indexOf(personId));
+            self._addPerson(response.data.persons[0]);
           }
         });
       }
     },
     
-    _containsPerson: function(personId){
-      var index = this._indexOf(personId);
-      return index >= 0; 
+    /**
+     * Helper method that actually adds the person to the list and updates
+     * the state.
+     * 
+     * @param {Person} person
+     */
+    _addPerson: function(person){
+      var self = this;
+      
+      // Add the person to the front of the list.
+      this.unshift('persons', person);
+      
+      // Remove people at the end of the list if it's longer than 10.
+      while(this.persons.length > 10){
+        this.pop('persons');
+      }
+      
+      // Select the person that was added. We use setTimeout so that the
+      // paper-listbox element has time to update before we tell what data is
+      // selected. Otherwise, in the case of revisiting and existing person and
+      // moving them to the top of the list, we'll end up selecting the wrong
+      // person.
+      setTimeout(function(){
+        self.$.list.select(0);
+      });
     },
     
+    /**
+     * Get the index of a person in the list. Returns -1 if they aren't in the list.
+     * 
+     * @param {String} personId
+     */
     _indexOf: function(personId){
       for(var i = 0; i < this.persons.length; i++){
         if(this.persons[i].id === personId){
