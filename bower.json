@@ -35,6 +35,7 @@
     "fs-person-sources": "fs-webcomponents/fs-person-sources#polymer-2",
     "fs-person-behavior": "fs-webcomponents/fs-person-behavior#polymer-2",
     "fs-pedigree": "fs-webcomponents/fs-pedigree#polymer-2",
-    "fs-person-card": "fs-webcomponents/fs-person-card#polymer-2"
+    "fs-person-card": "fs-webcomponents/fs-person-card#polymer-2",
+    "web-animations-js": "web-animations/web-animations-js#^2.2"
   }
 }

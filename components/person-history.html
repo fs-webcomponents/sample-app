@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
@@ -44,7 +45,7 @@ Basic example:
     </style>
     <fs-client></fs-client>
     <paper-dropdown-menu label="History" no-label-float horizontal-align="left">
-      <paper-listbox id="list" class="dropdown-content">
+      <paper-listbox id="list" slot="dropdown-content">
         <template is="dom-repeat" items="{{persons}}">
           <paper-item label="{{item.display.name}}" on-tap="_selectPerson">
             <paper-item-body two-line>
@@ -97,7 +98,7 @@ Basic example:
       var self = this,
           index = this._indexOf(personId),
           person;
-      
+          
       // When modifying an array that is a Polymer element property which data
       // is bound to we must use the Polymer array mutation methods so that
       // Polymer knows the data changed and can respond accordingly.
