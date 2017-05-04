@@ -44,7 +44,7 @@ Basic example:
       }
     </style>
     <fs-client></fs-client>
-    <paper-dropdown-menu label="History" no-label-float horizontal-align="left">
+    <paper-dropdown-menu id="menu" label="History" no-label-float horizontal-align="left">
       <paper-listbox id="list" slot="dropdown-content">
         <template is="dom-repeat" items="{{persons}}">
           <paper-item label="{{item.display.name}}" on-tap="_selectPerson">
@@ -80,6 +80,21 @@ Basic example:
     },
     
     behaviors: [FSBehavior],
+    
+    ready: function(){
+      
+      // Make sure the first person in the list is always selected. We do this
+      // by explicitly selecting the first person whenever the list changes.
+      //
+      // Due to a bug (https://github.com/PolymerElements/iron-selector/issues/154)
+      // we select the 2nd item then select the 1st item. Whenever that bug is
+      // fixed then we should only need to select the 1st item.
+      var list = this.$.list;
+      list.addEventListener('iron-items-changed', function(){
+        list.selectIndex(1);
+        list.selectIndex(0);
+      });
+    },
     
     /**
      * Clear the list. Should probably only be used when the user signs out.
@@ -129,7 +144,6 @@ Basic example:
      * @param {Person} person
      */
     _addPerson: function(person){
-      var self = this;
       
       // Add the person to the front of the list.
       this.unshift('persons', person);
@@ -138,15 +152,6 @@ Basic example:
       while(this.persons.length > 10){
         this.pop('persons');
       }
-      
-      // Select the person that was added. We use setTimeout so that the
-      // paper-listbox element has time to update before we tell what data is
-      // selected. Otherwise, in the case of revisiting and existing person and
-      // moving them to the top of the list, we'll end up selecting the wrong
-      // person.
-      setTimeout(function(){
-        self.$.list.select(0);
-      });
     },
     
     /**
