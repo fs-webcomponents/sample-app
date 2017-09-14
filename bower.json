@@ -1,10 +1,6 @@
 {
   "name": "sample-app",
-  "version": "1.0.0",
   "homepage": "https://github.com/fs-webcomponents/sample-app",
-  "authors": [
-    "Justin York"
-  ],
   "description": "Sample app for the FamilySearch web components",
   "main": "index.html",
   "license": "MIT",
@@ -26,16 +22,16 @@
     "paper-button": "PolymerElements/paper-button#^2.0.0",
     "iron-icons": "PolymerElements/iron-icons#^2.0.0",
     "iron-icon": "PolymerElements/iron-icon#^2.0.0",
-    "fs-client": "fs-webcomponents/fs-client#v4",
-    "fs-api-aware": "fs-webcomponents/fs-api-aware",
-    "fs-signin": "fs-webcomponents/fs-signin#v4",
-    "fs-person-chip": "fs-webcomponents/fs-person-chip#v4",
-    "fs-person-summary": "fs-webcomponents/fs-person-summary#v4",
-    "fs-person-facts": "fs-webcomponents/fs-person-facts#v4",
-    "fs-person-families": "fs-webcomponents/fs-person-families#v4",
-    "fs-person-sources": "fs-webcomponents/fs-person-sources#v4",
-    "fs-pedigree": "fs-webcomponents/fs-pedigree#v4",
-    "fs-person-card": "fs-webcomponents/fs-person-card#v4",
+    "fs-client": "fs-webcomponents/fs-client#^4.0.0",
+    "fs-api-aware": "fs-webcomponents/fs-api-aware#^4.0.0",
+    "fs-signin": "fs-webcomponents/fs-signin#^4.0.0",
+    "fs-person-chip": "fs-webcomponents/fs-person-chip#^4.0.0",
+    "fs-person-summary": "fs-webcomponents/fs-person-summary#^4.0.0",
+    "fs-person-facts": "fs-webcomponents/fs-person-facts#^4.0.0",
+    "fs-person-families": "fs-webcomponents/fs-person-families#^4.0.0",
+    "fs-person-sources": "fs-webcomponents/fs-person-sources#^4.0.0",
+    "fs-pedigree": "fs-webcomponents/fs-pedigree#^4.0.0",
+    "fs-person-card": "fs-webcomponents/fs-person-card#^4.0.0",
     "web-animations-js": "web-animations/web-animations-js#^2.2"
   }
 }
