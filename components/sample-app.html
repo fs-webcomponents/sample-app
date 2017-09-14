@@ -106,9 +106,13 @@
       }
     </style>
     
-    <fs-client id="client" app-key="a02j00000099Mc2AAE" redirect-uri="/" 
-               save-access-token exchange-code authenticated="{{authenticated}}"
-               debounce-duplicates></fs-client>
+    <fs-client id="client" 
+      app-key="a02j00000099Mc2AAE" 
+      redirect-uri="/"
+      save-access-token 
+      exchange-code 
+      authenticated="{{authenticated}}"
+      debounce-duplicates></fs-client>
     
     <app-header>
       <app-toolbar>
@@ -228,6 +232,9 @@
       ready() {
         super.ready();
         this._routerSetup();
+        
+        // Handle signin/signout events
+        this.$.client.addEventListener('authenticated-changed', (e) => this._authenticatedChanged(e));
         
         // Show a person's card when they are clicked on in the family area.
         // These events bubble up from `fs-person-families`.
