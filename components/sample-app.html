@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <script src="/bower_components/page/page.js"></script>
 
 <!-- Paper Elements -->
@@ -14,7 +14,7 @@
 <link rel="import" href="../bower_components/fs-signin/fs-signin.html">
 <link rel="import" href="../bower_components/fs-pedigree/fs-pedigree.html">
 <link rel="import" href="../bower_components/fs-person-card/fs-person-card.html">
-<link rel="import" href="../bower_components/fs-person-behavior/fs-person-behavior.html">
+<link rel="import" href="../bower_components/fs-api-aware/fs-api-aware.html">
 
 <!-- Custom Sample App Components -->
 <link rel="import" href="person-history.html">
@@ -143,7 +143,7 @@
     <div id="footer">
       <p>
         <a href="https://github.com/fs-webcomponents/sample-app" target="_blank">Source Code on GitHub</a> |
-        <a href="https://www.polymer-project.org/1.0/" target="_blank">Built with Polymer</a>
+        <a href="https://www.polymer-project.org" target="_blank">Built with Polymer</a>
       </p>
     </div>
     
@@ -160,279 +160,279 @@
       <paper-spinner-lite active></paper-spinner>
     </div>
   </template>
-</dom-module>
-
-<script>
-
-  Polymer({
-
-    is: 'sample-app',
-    
-    properties: {
+  <script>
+    class SampleApp extends FSApiAwareMixin(Polymer.Element) {
+  
+      static get is() { return 'sample-app'; }
       
-      /**
-       * The personId is set by the routes (the routes extract if from the URL)
-       * then it's passed on to the person-history, person-details, and fs-pedigree
-       * components.
-       */
-      personId: {
-        type: String,
-        observer: '_personIdChanged'
-      },
-      
-      /**
-       * True if either the user is loading or the person-details is loading.
-       */
-      loading: {
-        type: Boolean,
-        value: false,
-        computed: '_isLoading(userLoading, personDetailsLoading)',
-        observer: '_loadingChanged'
-      },
-      
-      /**
-       * Whether the user is being loaded.
-       */
-      userLoading: {
-        type: Boolean,
-        value: false
-      },
-      
-      /**
-       * Bound to the loading attribute of the person-details component. Therefore
-       * it will reflect the person-details loading state.
-       */
-      personDetailsLoading: {
-        type: Boolean,
-        value: false
-      },
-      
-      /**
-       * Supported values are 'person' and 'pedigree'
-       */
-      page: {
-        type: String,
-        value: 'person'
+      static get properties() {
+        return {
+          /**
+           * The personId is set by the routes (the routes extract if from the URL)
+           * then it's passed on to the person-history, person-details, and fs-pedigree
+           * components.
+           */
+          personId: {
+            type: String,
+            observer: '_personIdChanged'
+          },
+          
+          /**
+           * True if either the user is loading or the person-details is loading.
+           */
+          loading: {
+            type: Boolean,
+            value: false,
+            computed: '_isLoading(userLoading, personDetailsLoading)',
+            observer: '_loadingChanged'
+          },
+          
+          /**
+           * Whether the user is being loaded.
+           */
+          userLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Bound to the loading attribute of the person-details component. Therefore
+           * it will reflect the person-details loading state.
+           */
+          personDetailsLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Supported values are 'person' and 'pedigree'
+           */
+          page: {
+            type: String,
+            value: 'person'
+          },
+          
+          authenticated: {
+            type: Boolean,
+            value: false,
+            notify: true
+          }
+        };
       }
       
-    },
-    
-    behaviors: [FSBehavior],
-    
-    /**
-     * This method is called when the component and it's children have been
-     * setup. This method is guaranteed to only be called once.
-     * https://www.polymer-project.org/1.0/docs/devguide/registering-elements#lifecycle-callbacks
-     */
-    ready: function(){
-      this._routerSetup();
-      
-      // Listen for authentication events
-      this.$.client.addEventListener('authenticated-changed', this._authenticatedChanged.bind(this));
-      
-      // Show a person's card when they are clicked on in the family area.
-      // These events bubble up from `fs-person-families`.
-      this.$.personDetails.addEventListener('person-tap', this._showPersonCard.bind(this));
-      
-      // Show a person's card when they are clicked on in the pedigree.
-      this.$.pedigree.addEventListener('person-tap', this._showPersonCard.bind(this));
-      
-      // Hide the person card if anything else is clicked.
-      this.addEventListener('tap', this._showPersonCard.bind(this));
-      
-      // Navigate to a person when they are selected from the history dropdown.
-      this.$.history.addEventListener('person-select', function(e){
-        if(e.detail.personId){
-          page('/' + this.page + '/' + e.detail.personId);
-        }
-      }.bind(this));
-    },
-    
-    /**
-     * Show the person card.
-     * 
-     * @param {personId: string, x: Integer, y: Integer}
-     */
-    _showPersonCard: function(event){
-      
-      // If we have a person ID then display and position the card
-      if(event.detail.personId){
-        this.$.personCard.personId = event.detail.personId;
-        this.$.personCard.style.display = 'block';
-        this.$.personCard.style.left = event.detail.x + 'px';
-        this.$.personCard.style.top = (event.detail.y + document.body.scrollTop) + 'px';
-      } 
-      
-      // If we don't have a person ID then hide the card
-      else {
-        this.$.personCard.style.display = 'none';
-      }
-    },
-    
-    /**
-     * Show a person's profile when the person card profile button is clicked.
-     */
-    _navigateToProfile: function(){
-      page('/person/' + this.$.personCard.personId);
-    },
-    
-    /**
-     * Show a person's pedigree when the person card pedigree button is clicked.
-     */
-    _navigateToPedigree: function(){
-      page('/pedigree/' + this.$.personCard.personId);
-    },
-    
-    /**
-     * Used to calculate when the loading indicator should load.
-     */
-    _isLoading: function(personLoading, userLoading, personDetailsLoading){
-      return !!(personLoading || userLoading || personDetailsLoading);
-    },
-    
-    /**
-     * Freeze window scroll when loading
-     */
-    _loadingChanged: function(loading){
-      if(loading){
-        document.body.style.overflow = 'hidden';
-      } else {
-        document.body.style.overflow = 'auto';
-      }
-    },
-    
-    /**
-     * Add the personId to the history list when it's available.
-     */
-    _personIdChanged: function(personId){
-      if(personId){
-        this.$.history.addPerson(personId);
-      }
-    },
-    
-    /** 
-     * Handle sign in and sign out actions. We can't use the fs-client redirect
-     * properties because our router won't notice them and respond appropriately
-     * so we must manually handle them and tell our router where to go.
-     */
-    _authenticatedChanged: function(event){
+      /**
+       * This method is called when the component and it's children have been
+       * setup. This method is guaranteed to only be called once.
+       * https://www.polymer-project.org/2.0/docs/devguide/registering-elements#lifecycle-callbacks
+       */
+      ready() {
+        super.ready();
+        this._routerSetup();
         
-      // Sign in
-      if(event.detail.value) {
-        page('/person');
-      } 
-      
-      // Sign out
-      else {
-        this.personId = '';
-        this.user = {};
-        this.$.history.clear();
-        page('/');
+        // Show a person's card when they are clicked on in the family area.
+        // These events bubble up from `fs-person-families`.
+        this.$.personDetails.addEventListener('person-tap', this._showPersonCard.bind(this));
+        
+        // Show a person's card when they are clicked on in the pedigree.
+        this.$.pedigree.addEventListener('person-tap', this._showPersonCard.bind(this));
+        
+        // Hide the person card if anything else is clicked.
+        this.addEventListener('tap', this._showPersonCard.bind(this));
+        
+        // Navigate to a person when they are selected from the history dropdown.
+        this.$.history.addEventListener('person-select', function(e){
+          if(e.detail.personId){
+            page('/' + this.page + '/' + e.detail.personId);
+          }
+        }.bind(this));
       }
-    },
-    
-    /**
-     * Decided whether the person-details section should be displayed.
-     */
-    _showPersonDetails: function(authenticated, page){
-      return authenticated && page === 'person';
-    },
-    
-    /**
-     * Decided whether the pedigree section should be displayed.
-     */
-    _showPedigree: function(authenticated, page){
-      return authenticated && page === 'pedigree';
-    },
-    
-    /**
-     * Toggle between the person and pedigree pages.
-     */
-    _togglePage: function(){
-      if(this.page === 'person'){
-        page('/pedigree/' + this.personId);
-      } else {
-        page('/person/' + this.personId);
-      }
-    },
-    
-    _navButtonText: function(page){
-      if(this.page === 'person'){
-        return 'Pedigree';
-      } else {
-        return 'Person';
-      }
-    },
-    
-    /**
-     * Configure the router. We use page.js instead of Polymer app-routes because
-     * we need asynchronous middleware to make sure the user is logged in.
-     */
-    _routerSetup: function(){
-      var app = this;
-      
-      page('/person', ensureAuth, loadUser, function(){
-        page.redirect('/person/' + app.user.personId);
-      });
-      page('/person/:personId', ensureAuth, function(context){
-        app.personId = context.params.personId;
-        app.page = 'person';
-      });
-      page('/pedigree/:personId', ensureAuth, function(context){
-        app.personId = context.params.personId;
-        app.page = 'pedigree';
-      });
-      
-      // When signed in, forward to /person by default to load the current user
-      // so that we then know who the start person is.
-      // When signed out, show a welcome message.
-      page('/', function(){
-        if(app.isAuthenticated()){
-          page.redirect('/person');
-        }
-      });
-      
-      // Setup event bindings and start the router.
-      page();
       
       /**
-       * Make sure the user is logged in before proceeding with the route.
-       * Forward the user to the home page if they're not logged in.
+       * Show the person card.
+       * 
+       * @param {personId: string, x: Integer, y: Integer}
        */
-      function ensureAuth(context, next){
-        if(!app.isAuthenticated()){
+      _showPersonCard(event) {
+        
+        // If we have a person ID then display and position the card
+        if(event.detail.personId){
+          this.$.personCard.personId = event.detail.personId;
+          this.$.personCard.style.display = 'block';
+          this.$.personCard.style.left = event.detail.x + 'px';
+          this.$.personCard.style.top = (event.detail.y + document.body.scrollTop) + 'px';
+        } 
+        
+        // If we don't have a person ID then hide the card
+        else {
+          this.$.personCard.style.display = 'none';
+        }
+      }
+      
+      /**
+       * Show a person's profile when the person card profile button is clicked.
+       */
+      _navigateToProfile() {
+        page('/person/' + this.$.personCard.personId);
+      }
+      
+      /**
+       * Show a person's pedigree when the person card pedigree button is clicked.
+       */
+      _navigateToPedigree() {
+        page('/pedigree/' + this.$.personCard.personId);
+      }
+      
+      /**
+       * Used to calculate when the loading indicator should load.
+       */
+      _isLoading(personLoading, userLoading, personDetailsLoading) {
+        return !!(personLoading || userLoading || personDetailsLoading);
+      }
+      
+      /**
+       * Freeze window scroll when loading
+       */
+      _loadingChanged(loading) {
+        if(loading){
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = 'auto';
+        }
+      }
+      
+      /**
+       * Add the personId to the history list when it's available.
+       */
+      _personIdChanged(personId) {
+        if(personId){
+          this.$.history.addPerson(personId);
+        }
+      }
+      
+      /** 
+       * Handle sign in and sign out actions. We can't use the fs-client redirect
+       * properties because our router won't notice them and respond appropriately
+       * so we must manually handle them and tell our router where to go.
+       */
+      _authenticatedChanged(event) {
+          
+        // Sign in
+        if(event.detail.value) {
+          page('/person');
+        } 
+        
+        // Sign out
+        else {
+          this.personId = '';
+          this.user = {};
+          this.$.history.clear();
           page('/');
-        } else {
-          next();
         }
       }
       
       /**
-       * Load the current user if it isn't already available. The current user
-       * is required for knowing who the start person is.
+       * Decided whether the person-details section should be displayed.
        */
-      function loadUser(context, next){
-        if(!app.user){
-          app.userLoading = true;
-          app.getClient().get('/platform/users/current', function(error, response){
-            app.userLoading = false;
-            if(error){
-              console.error(error);
-            } else if(response && response.statusCode === 200){
-              app.user = response.data.users[0];
-            } else if(response && response.statusCode === 401){
-              app.$.client.signOut();
-              page('/');
-              return;
-            }
-            next();
-          });
+      _showPersonDetails(authenticated, page) {
+        return authenticated && page === 'person';
+      }
+      
+      /**
+       * Decided whether the pedigree section should be displayed.
+       */
+      _showPedigree(authenticated, page) {
+        return authenticated && page === 'pedigree';
+      }
+      
+      /**
+       * Toggle between the person and pedigree pages.
+       */
+      _togglePage() {
+        if(this.page === 'person'){
+          page('/pedigree/' + this.personId);
         } else {
-          next();
+          page('/person/' + this.personId);
+        }
+      }
+      
+      _navButtonText(page) {
+        if(this.page === 'person'){
+          return 'Pedigree';
+        } else {
+          return 'Person';
+        }
+      }
+      
+      /**
+       * Configure the router. We use page.js instead of Polymer app-routes because
+       * we need asynchronous middleware to make sure the user is logged in.
+       */
+      _routerSetup() {
+        var app = this;
+        
+        page('/person', ensureAuth, loadUser, function(){
+          page.redirect('/person/' + app.user.personId);
+        });
+        page('/person/:personId', ensureAuth, function(context){
+          app.personId = context.params.personId;
+          app.page = 'person';
+        });
+        page('/pedigree/:personId', ensureAuth, function(context){
+          app.personId = context.params.personId;
+          app.page = 'pedigree';
+        });
+        
+        // When signed in, forward to /person by default to load the current user
+        // so that we then know who the start person is.
+        // When signed out, show a welcome message.
+        page('/', function(){
+          if(app.authenticated){
+            page.redirect('/person');
+          }
+        });
+        
+        // Setup event bindings and start the router.
+        page();
+        
+        /**
+         * Make sure the user is logged in before proceeding with the route.
+         * Forward the user to the home page if they're not logged in.
+         */
+        function ensureAuth(context, next){
+          if(!app.authenticated){
+            page('/');
+          } else {
+            next();
+          }
+        }
+        
+        /**
+         * Load the current user if it isn't already available. The current user
+         * is required for knowing who the start person is.
+         */
+        function loadUser(context, next){
+          if(!app.user){
+            app.userLoading = true;
+            app.$.client.client.get('/platform/users/current', function(error, response){
+              app.userLoading = false;
+              if(error){
+                console.error(error);
+              } else if(response && response.statusCode === 200){
+                app.user = response.data.users[0];
+              } else if(response && response.statusCode === 401){
+                app.$.client.signOut();
+                page('/');
+                return;
+              }
+              next();
+            });
+          } else {
+            next();
+          }
         }
       }
     }
     
-  });
-  
-</script>
+    customElements.define(SampleApp.is, SampleApp);
+  </script>
+</dom-module>
