@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/fs-person-vitals/fs-person-vitals.html">
 <link rel="import" href="../bower_components/fs-person-summary/fs-person-summary.html">
 <link rel="import" href="../bower_components/fs-person-families/fs-person-families.html">
 <link rel="import" href="../bower_components/fs-person-facts/fs-person-facts.html">
@@ -31,6 +32,10 @@ the loading state of the component.
       </div>
     </paper-card>
     <div>
+      <h3>Vitals</h3>
+      <fs-person-vitals person-loading="{{vitalsLoading}}" person-id="[[personId]]"></fs-person-vitals>
+    </div>
+    <div>
       <h3>Facts</h3>
       <fs-person-facts person-loading="{{factsLoading}}" person-id="[[personId]]"></fs-person-facts>
     </div>
@@ -51,6 +56,14 @@ the loading state of the component.
       static get properties() {
         return {
           personId: String,
+          
+          /**
+           * Reflects the loading state of the fs-person-vitals element.
+           */
+          vitalsLoading: {
+            type: Boolean,
+            value: false
+          },
           
           /**
            * Reflects the loading state of the fs-person-families element.
@@ -92,13 +105,13 @@ the loading state of the component.
             type: Boolean,
             readOnly: true,
             notify: true,
-            computed: '_isLoading(summaryLoading, factsLoading, familiesLoading, sourcesLoading)'
+            computed: '_isLoading(vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading)'
           }
         };
       }
       
-      _isLoading(summaryLoading, factsLoading, familiesLoading, sourcesLoading) {
-        return summaryLoading || factsLoading || familiesLoading || sourcesLoading;
+      _isLoading(vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading) {
+        return vitalsLoading || summaryLoading || factsLoading || familiesLoading || sourcesLoading;
       }
     }
     
