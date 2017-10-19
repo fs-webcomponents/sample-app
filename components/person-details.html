@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/fs-person-families/fs-person-families.html">
 <link rel="import" href="../bower_components/fs-person-facts/fs-person-facts.html">
 <link rel="import" href="../bower_components/fs-person-sources/fs-person-sources.html">
+<link rel="import" href="../bower_components/fs-person-gender/fs-person-gender.html">
 
 <!--
 Small wrapper around person profile components. This acts as one control point
@@ -27,7 +28,7 @@ the loading state of the component.
         display: block;
       }
       
-      .preferred-name-card {
+      paper-card {
         width: 100%;
       }
     </style>
@@ -38,9 +39,17 @@ the loading state of the component.
     </paper-card>
     <div>
       <h3>Name</h3>
-      <paper-card class="preferred-name-card">
+      <paper-card>
         <div class="card-content">
           <fs-person-preferred-name person-loading="{{nameLoading}}" person-id="[[personId]]" editable></fs-person-preferred-name>
+        </div>
+      </paper-card>
+    </div>
+    <div>
+      <h3>Gender</h3>
+      <paper-card class="preferred-name-card">
+        <div class="card-content">
+          <fs-person-gender person-loading="{{genderLoading}}" person-id="[[personId]]" editable></fs-person-gender>
         </div>
       </paper-card>
     </div>
@@ -74,6 +83,14 @@ the loading state of the component.
            * Reflect the loading state of the fs-person-preferred-name element
            */
           nameLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Reflect the loading state of the fs-person-gender element
+           */
+          genderLoading: {
             type: Boolean,
             value: false
           },
@@ -126,13 +143,13 @@ the loading state of the component.
             type: Boolean,
             readOnly: true,
             notify: true,
-            computed: '_isLoading(nameLoading, vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading)'
+            computed: '_isLoading(nameLoading, genderLoading, vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading)'
           }
         };
       }
       
-      _isLoading(nameLoading, vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading) {
-        return nameLoading || vitalsLoading || summaryLoading || factsLoading || familiesLoading || sourcesLoading;
+      _isLoading(nameLoading, genderLoading, vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading) {
+        return nameLoading || genderLoading || vitalsLoading || summaryLoading || factsLoading || familiesLoading || sourcesLoading;
       }
     }
     

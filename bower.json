@@ -34,6 +34,7 @@
     "fs-pedigree": "fs-webcomponents/fs-pedigree#^4.0.0",
     "fs-person-card": "fs-webcomponents/fs-person-card#^4.0.0",
     "web-animations-js": "web-animations/web-animations-js#^2.2",
-    "fs-person-name": "fs-webcomponents/fs-person-name#^4.0.0"
+    "fs-person-name": "fs-webcomponents/fs-person-name#^4.0.0",
+    "fs-person-gender": "fs-webcomponents/fs-person-gender#^4.0.0"
   }
 }
