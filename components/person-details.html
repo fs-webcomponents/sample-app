@@ -64,7 +64,8 @@ the loading state of the component.
     </div>
     <div id="family">
       <h3>Family</h3>
-      <fs-person-families 
+      <fs-person-families
+        id="families"
         loading="{{familiesLoading}}" 
         person-id="[[personId]]" 
         add-persons
@@ -76,7 +77,7 @@ the loading state of the component.
       <h3>Sources</h3>
       <fs-person-sources loading="{{sourcesLoading}}" person-id="[[personId]]"></fs-person-sources>
     </div>
-    <fs-add-person id="addPerson"></fs-add-person>
+    <fs-add-person id="addPerson" on-person-added="_reloadFamilies"></fs-add-person>
   </template>
   <script>
     class PersonDetails extends Polymer.Element {
@@ -158,6 +159,10 @@ the loading state of the component.
       
       _isLoading(nameLoading, genderLoading, vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading) {
         return nameLoading || genderLoading || vitalsLoading || summaryLoading || factsLoading || familiesLoading || sourcesLoading;
+      }
+      
+      _reloadFamilies() {
+        this.$.families.reload();
       }
       
       _addChild(e) {
