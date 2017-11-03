@@ -71,7 +71,10 @@ the loading state of the component.
         add-persons
         on-add-child="_addChild"
         on-add-father="_addFather"
-        on-add-mother="_addMother"></fs-person-families>
+        on-add-mother="_addMother"
+        on-add-parent="_addParent"
+        on-add-spouse="_addSpouse"
+        on-add-child-unknown-parent="_addChildUnknownParent"></fs-person-families>
     </div>
     <div>
       <h3>Sources</h3>
@@ -173,13 +176,32 @@ the loading state of the component.
       
       _addFather(e) {
         this.$.addPerson.caprIds = e.detail.caprIds;
-        this.$.addPerson.gender = 'http://gedcomx.org/Female';
+        this.$.addPerson.motherId = e.detail.motherId;
+        this.$.addPerson.gender = 'http://gedcomx.org/Male';
         this.$.addPerson.open();
       }
       
       _addMother(e) {
         this.$.addPerson.caprIds = e.detail.caprIds;
-        this.$.addPerson.gender = 'http://gedcomx.org/Male';
+        this.$.addPerson.fatherId = e.detail.fatherId;
+        this.$.addPerson.gender = 'http://gedcomx.org/Female';
+        this.$.addPerson.open();
+      }
+      
+      _addParent(e) {
+        this.$.addPerson.childId = e.detail.childId;
+        this.$.addPerson.open();
+      }
+      
+      _addSpouse(e) {
+        this.$.addPerson.spouseId = e.detail.spouseId;
+        this.$.addPerson.open();
+      }
+      
+      _addChildUnknownParent(e) {
+        // One of these will be undefined. We don't know which so we just set both.
+        this.$.addPerson.fatherId = e.detail.fatherId;
+        this.$.addPerson.motherId = e.detail.motherId;
         this.$.addPerson.open();
       }
     }
