@@ -7,6 +7,7 @@
 <link rel="import" href="../bower_components/fs-person-facts/fs-person-facts.html">
 <link rel="import" href="../bower_components/fs-person-sources/fs-person-sources.html">
 <link rel="import" href="../bower_components/fs-person-gender/fs-person-gender.html">
+<link rel="import" href="../bower_components/fs-add-person/fs-add-person.html">
 
 <!--
 Small wrapper around person profile components. This acts as one control point
@@ -63,12 +64,19 @@ the loading state of the component.
     </div>
     <div id="family">
       <h3>Family</h3>
-      <fs-person-families loading="{{familiesLoading}}" person-id="[[personId]]"></fs-person-families>
+      <fs-person-families 
+        loading="{{familiesLoading}}" 
+        person-id="[[personId]]" 
+        add-persons
+        on-add-child="_addChild"
+        on-add-father="_addFather"
+        on-add-mother="_addMother"></fs-person-families>
     </div>
     <div>
       <h3>Sources</h3>
       <fs-person-sources loading="{{sourcesLoading}}" person-id="[[personId]]"></fs-person-sources>
     </div>
+    <fs-add-person id="addPerson"></fs-add-person>
   </template>
   <script>
     class PersonDetails extends Polymer.Element {
@@ -150,6 +158,24 @@ the loading state of the component.
       
       _isLoading(nameLoading, genderLoading, vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading) {
         return nameLoading || genderLoading || vitalsLoading || summaryLoading || factsLoading || familiesLoading || sourcesLoading;
+      }
+      
+      _addChild(e) {
+        this.$.addPerson.fatherId = e.detail.fatherId;
+        this.$.addPerson.motherId = e.detail.motherId;
+        this.$.addPerson.open();
+      }
+      
+      _addFather(e) {
+        this.$.addPerson.caprIds = e.detail.caprIds;
+        this.$.addPerson.gender = 'http://gedcomx.org/Female';
+        this.$.addPerson.open();
+      }
+      
+      _addMother(e) {
+        this.$.addPerson.caprIds = e.detail.caprIds;
+        this.$.addPerson.gender = 'http://gedcomx.org/Male';
+        this.$.addPerson.open();
       }
     }
     
