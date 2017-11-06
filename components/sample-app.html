@@ -266,7 +266,7 @@
           this.$.personCard.personId = event.detail.personId;
           this.$.personCard.style.display = 'block';
           this.$.personCard.style.left = event.detail.x + 'px';
-          this.$.personCard.style.top = (event.detail.y + document.body.scrollTop) + 'px';
+          this.$.personCard.style.top = (event.detail.y + window.scrollY) + 'px';
         } 
         
         // If we don't have a person ID then hide the card
