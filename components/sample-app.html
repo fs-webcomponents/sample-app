@@ -118,7 +118,7 @@
     <app-header>
       <app-toolbar>
         <div main-title class="title"><a href="/">Sample App</a></div>
-        <person-history id="history"></person-history>
+        <person-history id="history" on-person-select="_historySelect"></person-history>
         <fs-signin></fs-signin>
       </app-toolbar>
     </app-header>
@@ -139,8 +139,18 @@
           <paper-button on-tap="_togglePage">[[_navButtonText(page)]]</paper-button>
         </div>
         
-        <person-details id="personDetails" person-id="[[personId]]" hidden$="[[!_showPersonDetails(authenticated, page)]]" loading="{{personDetailsLoading}}"></person-details>
-        <fs-pedigree id="pedigree" person-id="[[personId]]" hidden$="[[!_showPedigree(authenticated, page)]]"></fs-pedigree>
+        <person-details 
+          id="personDetails" 
+          person-id="[[personId]]" 
+          hidden$="[[!_showPersonDetails(authenticated, page)]]" 
+          loading="{{personDetailsLoading}}"
+          on-person-tap="_showPersonCard"></person-details>
+        <fs-pedigree 
+          id="pedigree" 
+          person-id="[[personId]]" 
+          hidden$="[[!_showPedigree(authenticated, page)]]"
+          on-person-tap="_showPersonCard"
+          on-add-person="_addPedigreePerson"></fs-pedigree>
       </div>
       
     </div>
@@ -246,47 +256,58 @@
         super.ready();
         this._routerSetup();
         
-        // TODO: move these event listeners to markup
-        
-        // Handle signin/signout events
+        // Handle signin/signout events.
+        // We manually set this up here instead of in the markup because
+        // the authenticated-changed event gets fired on load with the default
+        // value of false which then triggers our sign-out reload behavior.
+        // Manually attaching the listener here causes it to miss the initial
+        // change event with the default value of false.
+        // An alternative would be to change our sign-out behavior.
         this.$.client.addEventListener('authenticated-changed', (e) => this._authenticatedChanged(e));
         
-        // Show a person's card when they are clicked on in the family area.
-        // These events bubble up from `fs-person-families`.
-        this.$.personDetails.addEventListener('person-tap', this._showPersonCard.bind(this));
-        
-        // Show a person's card when they are clicked on in the pedigree.
-        this.$.pedigree.addEventListener('person-tap', this._showPersonCard.bind(this));
-        this.$.pedigree.addEventListener('add-person', this._addPedigreePerson.bind(this));
-        
         // Hide the person card if anything else is clicked.
-        this.addEventListener('tap', this._showPersonCard.bind(this));
-        
-        // Navigate to a person when they are selected from the history dropdown.
-        this.$.history.addEventListener('person-select', function(e){
-          if(e.detail.personId){
-            page('/' + this.page + '/' + e.detail.personId);
-          }
-        }.bind(this));
+        // I'm pretty sure we can't do this via markup (i.e. can't register
+        // an event listener on the custom element itself).
+        this.addEventListener('click', this._hidePersonCard.bind(this));
       }
       
       /**
        * Show the person card.
        */
       _showPersonCard(event) {
-        
-        // If we have a person ID then display and position the card
         if(event.detail.personId){
           this.$.personCard.personId = event.detail.personId;
           this.$.personCard.style.display = 'block';
           this.$.personCard.style.left = event.detail.sourceEvent.pageX + 'px';
           this.$.personCard.style.top = event.detail.sourceEvent.pageY + 'px';
-        } 
-        
-        // If we don't have a person ID then hide the card
-        else {
-          this.$.personCard.style.display = 'none';
         }
+      }
+      
+      /**
+       * Hide the person card if something besides a fs-person-chip is clicked
+       */
+      _hidePersonCard(e) {
+        const path = e.path || this._nodePath(e.target);
+        const pathLength = path.length;
+        for(let i = 0; i < pathLength; i++){
+          if(path[i] instanceof FSPersonChip) {
+            return;
+          }
+        }
+        this.$.personCard.style.display = 'none';
+      }
+      
+      /**
+       * Calculate an element's node path (list of parent nodes)
+       */
+      _nodePath(e) {
+        const path = [];
+        const c = e;
+        while(c) {
+          path.push(c);
+          c = c.parentNode;
+        }
+        return path;
       }
       
       /**
@@ -381,6 +402,15 @@
           page('/pedigree/' + this.personId);
         } else {
           page('/person/' + this.personId);
+        }
+      }
+      
+      /**
+       * Process the person-select event from the person-history element
+       */
+      _historySelect(e){
+        if(e.detail.personId){
+          page('/' + this.page + '/' + e.detail.personId);
         }
       }
       
