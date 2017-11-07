@@ -144,7 +144,13 @@
           person-id="[[personId]]" 
           hidden$="[[!_showPersonDetails(authenticated, page)]]" 
           loading="{{personDetailsLoading}}"
-          on-person-tap="_showPersonCard"></person-details>
+          on-person-tap="_showPersonCard"
+          on-add-child="_addChild"
+          on-add-father="_addFather"
+          on-add-mother="_addMother"
+          on-add-parent="_addParent"
+          on-add-spouse="_addSpouse"
+          on-add-child-unknown-parent="_addChildUnknownParent"></person-details>
         <fs-pedigree 
           id="pedigree" 
           person-id="[[personId]]" 
@@ -347,7 +353,7 @@
        */
       _reload() {
         this.$.pedigree.reload();
-        this.$.personDetails._reloadFamilies();
+        this.$.personDetails.reload();
       }
       
       /**
@@ -420,6 +426,43 @@
         } else {
           return 'Person';
         }
+      }
+      
+      _addChild(e) {
+        this.$.addPerson.fatherId = e.detail.fatherId;
+        this.$.addPerson.motherId = e.detail.motherId;
+        this.$.addPerson.open();
+      }
+      
+      _addFather(e) {
+        this.$.addPerson.caprIds = e.detail.caprIds;
+        this.$.addPerson.motherId = e.detail.motherId;
+        this.$.addPerson.gender = 'http://gedcomx.org/Male';
+        this.$.addPerson.open();
+      }
+      
+      _addMother(e) {
+        this.$.addPerson.caprIds = e.detail.caprIds;
+        this.$.addPerson.fatherId = e.detail.fatherId;
+        this.$.addPerson.gender = 'http://gedcomx.org/Female';
+        this.$.addPerson.open();
+      }
+      
+      _addParent(e) {
+        this.$.addPerson.childId = e.detail.childId;
+        this.$.addPerson.open();
+      }
+      
+      _addSpouse(e) {
+        this.$.addPerson.spouseId = e.detail.spouseId;
+        this.$.addPerson.open();
+      }
+      
+      _addChildUnknownParent(e) {
+        // One of these will be undefined. We don't know which so we just set both.
+        this.$.addPerson.fatherId = e.detail.fatherId;
+        this.$.addPerson.motherId = e.detail.motherId;
+        this.$.addPerson.open();
       }
       
       /**
