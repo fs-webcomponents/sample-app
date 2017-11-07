@@ -15,6 +15,7 @@
 <link rel="import" href="../bower_components/fs-pedigree/fs-pedigree.html">
 <link rel="import" href="../bower_components/fs-person-card/fs-person-card.html">
 <link rel="import" href="../bower_components/fs-api-aware/fs-api-aware.html">
+<link rel="import" href="../bower_components/fs-add-person/fs-add-person.html">
 
 <!-- Custom Sample App Components -->
 <link rel="import" href="person-history.html">
@@ -158,6 +159,9 @@
         <paper-button on-tap="_navigateToPedigree"><iron-icon icon="hardware:device-hub"></iron-icon> Pedigree</paper-button>
       </div>
     </fs-person-card>
+    
+    <!-- This dialog is shown when a person is being added to the tree -->
+    <fs-add-person id="addPerson" on-person-added="_reload"></fs-add-person>
 
     <!-- The loader shows when person details are loading -->
     <div id="loader" hidden$="[[!loading]]">
@@ -187,7 +191,7 @@
           loading: {
             type: Boolean,
             value: false,
-            computed: '_isLoading(userLoading, personDetailsLoading)',
+            computed: '_isLoading(personLoading, userLoading, personDetailsLoading, _caprSearchLoading)',
             observer: '_loadingChanged'
           },
           
@@ -204,6 +208,15 @@
            * it will reflect the person-details loading state.
            */
           personDetailsLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /** 
+           * Whether the parents relationship lookup is still loading 
+           * (for adding persons via the pedigree)
+           */
+          _caprSearchLoading: {
             type: Boolean,
             value: false
           },
@@ -233,6 +246,8 @@
         super.ready();
         this._routerSetup();
         
+        // TODO: move these event listeners to markup
+        
         // Handle signin/signout events
         this.$.client.addEventListener('authenticated-changed', (e) => this._authenticatedChanged(e));
         
@@ -242,6 +257,7 @@
         
         // Show a person's card when they are clicked on in the pedigree.
         this.$.pedigree.addEventListener('person-tap', this._showPersonCard.bind(this));
+        this.$.pedigree.addEventListener('add-person', this._addPedigreePerson.bind(this));
         
         // Hide the person card if anything else is clicked.
         this.addEventListener('tap', this._showPersonCard.bind(this));
@@ -256,8 +272,6 @@
       
       /**
        * Show the person card.
-       * 
-       * @param {personId: string, x: Integer, y: Integer}
        */
       _showPersonCard(event) {
         
@@ -265,8 +279,8 @@
         if(event.detail.personId){
           this.$.personCard.personId = event.detail.personId;
           this.$.personCard.style.display = 'block';
-          this.$.personCard.style.left = event.detail.x + 'px';
-          this.$.personCard.style.top = (event.detail.y + window.scrollY) + 'px';
+          this.$.personCard.style.left = event.detail.sourceEvent.pageX + 'px';
+          this.$.personCard.style.top = event.detail.sourceEvent.pageY + 'px';
         } 
         
         // If we don't have a person ID then hide the card
@@ -292,8 +306,8 @@
       /**
        * Used to calculate when the loading indicator should load.
        */
-      _isLoading(personLoading, userLoading, personDetailsLoading) {
-        return !!(personLoading || userLoading || personDetailsLoading);
+      _isLoading(personLoading, userLoading, personDetailsLoading, _caprSearchLoading) {
+        return personLoading || userLoading || personDetailsLoading || _caprSearchLoading;
       }
       
       /**
@@ -305,6 +319,14 @@
         } else {
           document.body.style.overflow = 'auto';
         }
+      }
+      
+      /**
+       * Reload the pedigree and person details
+       */
+      _reload() {
+        this.$.pedigree.reload();
+        this.$.personDetails._reloadFamilies();
       }
       
       /**
@@ -368,6 +390,76 @@
         } else {
           return 'Person';
         }
+      }
+      
+      /**
+       * Trigger the Add Person dialog
+       */
+      _addPedigreePerson(e) {
+        
+        const {childId, fatherId, motherId} = e.detail;
+        
+        // We can't do anything without a childId
+        if(childId) {
+          
+          // We need to query for an existing child-and-parents relationship
+          if(fatherId || motherId) {
+            this._caprSearchLoading = true;
+            const request = new FSRequest();
+            request.url = `/platform/tree/persons/${childId}/parents`;
+            request.ready();
+            request.addEventListener('response', (e) => {
+              const response = e.detail.response;
+              const caprIds = [];
+              if(response.data && response.data.childAndParentsRelationships) {
+                response.data.childAndParentsRelationships.forEach((rel) => {
+                  if(this._caprMatches(rel, childId, fatherId, motherId)) {
+                    caprIds.push(rel.id);
+                  }
+                });
+              }
+              this.$.addPerson.motherId = motherId;
+              this.$.addPerson.fatherId = fatherId;
+              this.$.addPerson.caprIds = caprIds;
+              this._caprSearchLoading = false;
+              this.$.addPerson.open();
+            });
+            request.generateRequest();
+          } 
+          
+          // Don't need to look for a capr; just open the dialog
+          else {
+            this.$.addPerson.childId = childId;
+            this.$.addPerson.open();
+          }
+        }
+      }
+      
+      /**
+       * Check whether a child-and-parents relationship matches the given
+       * childId, fatherId, and motherId
+       * 
+       * @return {Boolean}
+       */
+      _caprMatches(rel, childId, fatherId, motherId) {
+        return rel.child.resourceId === childId 
+           && // Father matches in both or doesn't exist in both
+          (
+            // Father exists and matches in both
+            (fatherId && rel.father && rel.father.resourceId === fatherId)
+            
+            // Or father doesn't exist in both
+            || (!fatherId && !rel.father)
+          )
+          
+          && // Mother matches in both or doesn't exist in both
+          (
+            // Mother exists and matches in both
+            (motherId && rel.mother && rel.mother.resourceId === motherId)
+            
+            // Or mother doesn't exist in both
+            || (!motherId && !rel.mother)
+          );
       }
       
       /**
