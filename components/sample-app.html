@@ -117,11 +117,6 @@
         <!-- content displayed when the user isn't signed in -->
         <home-page hidden$="[[authenticated]]"></home-page>
         
-        <!-- when the user is signed in, this button helps them toggle between the person details and pedigree -->
-        <div id="person-nav-toolbar" hidden$="[[!authenticated]]">
-          <paper-button on-tap="_togglePage">[[_navButtonText(page)]]</paper-button>
-        </div>
-        
         <person-page 
           id="personPage" 
           person-id="[[personId]]" 
@@ -133,13 +128,17 @@
           on-add-mother="_addMother"
           on-add-parent="_addParent"
           on-add-spouse="_addSpouse"
-          on-add-child-unknown-parent="_addChildUnknownParent"></person-page>
+          on-add-child-unknown-parent="_addChildUnknownParent">
+          <paper-button on-tap="_togglePedigreePage">Pedigree</paper-button>
+        </person-page>
         <pedigree-page 
           id="pedigree" 
           person-id="[[personId]]" 
           hidden$="[[!_showPedigree(authenticated, page)]]"
           on-person-tap="_showPersonCard"
-          on-add-person="_addPedigreePerson"></fs-pedigree>
+          on-add-person="_addPedigreePerson">
+          <paper-button on-tap="_toggleProfilePage">Person</paper-button>
+        </pedigree-page>
       </div>
       
     </div>
@@ -300,10 +299,17 @@
       }
       
       /**
-       * Show a person's profile when the person card profile button is clicked.
+       * Show a person's detail page when the person card profile button is clicked.
        */
       _navigateToProfile() {
         page('/person/' + this.$.personCard.personId);
+      }
+      
+      /**
+       * Show the current person's profile
+       */
+      _toggleProfilePage() {
+        page('/person/' + this.personId);
       }
       
       /**
@@ -311,6 +317,13 @@
        */
       _navigateToPedigree() {
         page('/pedigree/' + this.$.personCard.personId);
+      }
+      
+      /**
+       * Show the current person's pedigree
+       */
+      _togglePedigreePage() {
+        page('/pedigree/' + this.personId);
       }
       
       /**
@@ -384,30 +397,11 @@
       }
       
       /**
-       * Toggle between the person and pedigree pages.
-       */
-      _togglePage() {
-        if(this.page === 'person'){
-          page('/pedigree/' + this.personId);
-        } else {
-          page('/person/' + this.personId);
-        }
-      }
-      
-      /**
        * Process the person-select event from the person-history element
        */
       _historySelect(e){
         if(e.detail.personId){
           page('/' + this.page + '/' + e.detail.personId);
-        }
-      }
-      
-      _navButtonText(page) {
-        if(this.page === 'person'){
-          return 'Pedigree';
-        } else {
-          return 'Person';
         }
       }
       
