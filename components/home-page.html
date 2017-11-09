@@ -1,0 +1,42 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/fs-signin/fs-signin.html">
+
+<!--
+Setup the home page.
+
+@element home-page
+-->
+<dom-module id="home-page">
+  <template>
+    <style>
+      fs-signin {
+        --fs-signin-signin: {
+          background-color: var(--google-red-500);
+        }
+        font-size: initial;
+      }
+      
+      :host {
+        text-align: center;
+      }
+      
+      img {
+        height: 600px;
+        margin: auto;
+        margin-top: 64px;
+        display: block;
+      }
+    </style>
+    <div>
+      <h1>FamilySearch Web Components Sample App</h1>
+      <fs-signin></fs-signin>
+      <img src="/public/fs-wc-screenshot.png" />
+    </div>
+  </template>
+  <script>
+    class HomePage extends Polymer.Element {
+      static get is() { return 'home-page'; }
+    }
+    customElements.define(HomePage.is, HomePage);
+  </script>
+</dom-module>

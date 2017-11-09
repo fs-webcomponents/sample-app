@@ -2,14 +2,16 @@
 <link rel="import" href="../bower_components/fs-pedigree/fs-pedigree.html">
 
 <!--
-Setup the person details page.
+Setup the pedigree page.
 
 @element pedigree-page
 -->
 <dom-module id="pedigree-page">
   <template>
     <style>
-      
+      fs-pedigree {
+        --fs-pedigree-person-width: 200px;
+      }
     </style>
     <fs-pedigree 
       id="pedigree" 
