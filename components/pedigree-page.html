@@ -1,0 +1,45 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/fs-pedigree/fs-pedigree.html">
+
+<!--
+Setup the person details page.
+
+@element pedigree-page
+-->
+<dom-module id="pedigree-page">
+  <template>
+    <style>
+      
+    </style>
+    <fs-pedigree 
+      id="pedigree" 
+      person-id="[[personId]]"
+      loading="{{loading}}"></fs-pedigree>
+  </template>
+  <script>
+    class PedigreePage extends Polymer.Element {
+      
+      static get is() { return 'pedigree-page'; }
+      
+      static get properties() {
+        return {
+          personId: String,
+          
+          /**
+           * Loading state of the pedigree-page.
+           */
+          loading: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+      
+      reload() {
+        this.$.pedigree.reload();
+      }
+    }
+    
+    customElements.define(PedigreePage.is, PedigreePage);
+  </script>
+</dom-module>

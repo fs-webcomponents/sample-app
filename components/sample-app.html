@@ -12,7 +12,6 @@
 <!-- FamilySearch Components -->
 <link rel="import" href="../bower_components/fs-client/fs-client.html">
 <link rel="import" href="../bower_components/fs-signin/fs-signin.html">
-<link rel="import" href="../bower_components/fs-pedigree/fs-pedigree.html">
 <link rel="import" href="../bower_components/fs-person-card/fs-person-card.html">
 <link rel="import" href="../bower_components/fs-api-aware/fs-api-aware.html">
 <link rel="import" href="../bower_components/fs-add-person/fs-add-person.html">
@@ -20,6 +19,7 @@
 <!-- Custom Sample App Components -->
 <link rel="import" href="person-history.html">
 <link rel="import" href="person-page.html">
+<link rel="import" href="pedigree-page.html">
 
 <dom-module id="sample-app">
   <template>
@@ -151,7 +151,7 @@
           on-add-parent="_addParent"
           on-add-spouse="_addSpouse"
           on-add-child-unknown-parent="_addChildUnknownParent"></person-page>
-        <fs-pedigree 
+        <pedigree-page 
           id="pedigree" 
           person-id="[[personId]]" 
           hidden$="[[!_showPedigree(authenticated, page)]]"
