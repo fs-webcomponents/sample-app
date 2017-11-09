@@ -19,7 +19,7 @@
 
 <!-- Custom Sample App Components -->
 <link rel="import" href="person-history.html">
-<link rel="import" href="person-details.html">
+<link rel="import" href="person-page.html">
 
 <dom-module id="sample-app">
   <template>
@@ -139,8 +139,8 @@
           <paper-button on-tap="_togglePage">[[_navButtonText(page)]]</paper-button>
         </div>
         
-        <person-details 
-          id="personDetails" 
+        <person-page 
+          id="personPage" 
           person-id="[[personId]]" 
           hidden$="[[!_showPersonDetails(authenticated, page)]]" 
           loading="{{personDetailsLoading}}"
@@ -150,7 +150,7 @@
           on-add-mother="_addMother"
           on-add-parent="_addParent"
           on-add-spouse="_addSpouse"
-          on-add-child-unknown-parent="_addChildUnknownParent"></person-details>
+          on-add-child-unknown-parent="_addChildUnknownParent"></person-page>
         <fs-pedigree 
           id="pedigree" 
           person-id="[[personId]]" 
@@ -353,7 +353,7 @@
        */
       _reload() {
         this.$.pedigree.reload();
-        this.$.personDetails.reload();
+        this.$.personPage.reload();
       }
       
       /**

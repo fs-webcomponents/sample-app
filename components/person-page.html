@@ -1,0 +1,45 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="person-details.html">
+
+<!--
+Setup the person details page.
+
+@element person-page
+-->
+<dom-module id="person-page">
+  <template>
+    <style>
+      
+    </style>
+    <person-details 
+      id="details"
+      person-id="[[personId]]"
+      loading="{{loading}}"></person-details>
+  </template>
+  <script>
+    class PersonPage extends Polymer.Element {
+      
+      static get is() { return 'person-page'; }
+      
+      static get properties() {
+        return {
+          personId: String,
+          
+          /**
+           * Loading state of the person-page.
+           */
+          loading: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+      
+      reload() {
+        this.$.details.reload();
+      }
+    }
+    
+    customElements.define(PersonPage.is, PersonPage);
+  </script>
+</dom-module>
