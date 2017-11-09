@@ -133,6 +133,7 @@
           <pedigree-page 
             id="pedigreePage"
             name="pedigree"
+            loading="{{pedigreeLoading}}"
             on-person-tap="_showPersonCard"
             on-add-person="_addPedigreePerson">
             <paper-button on-tap="_toggleProfilePage">Person</paper-button>
@@ -188,7 +189,7 @@
           loading: {
             type: Boolean,
             value: false,
-            computed: '_isLoading(personLoading, userLoading, personDetailsLoading, _caprSearchLoading)',
+            computed: '_isLoading(personLoading, userLoading, personDetailsLoading, pedigreeLoading, _caprSearchLoading)',
             observer: '_loadingChanged'
           },
           
@@ -205,6 +206,14 @@
            * it will reflect the person-details loading state.
            */
           personDetailsLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Whether the pedigree page is loading.
+           */
+          pedigreeLoading: {
             type: Boolean,
             value: false
           },
@@ -328,8 +337,8 @@
       /**
        * Used to calculate when the loading indicator should load.
        */
-      _isLoading(personLoading, userLoading, personDetailsLoading, _caprSearchLoading) {
-        return personLoading || userLoading || personDetailsLoading || _caprSearchLoading;
+      _isLoading(personLoading, userLoading, personDetailsLoading, pedigreeLoading, _caprSearchLoading) {
+        return personLoading || userLoading || personDetailsLoading || pedigreeLoading || _caprSearchLoading;
       }
       
       /**
