@@ -1,13 +1,14 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <script src="/bower_components/page/page.js"></script>
 
-<!-- Paper Elements -->
+<!-- Polymer Elements -->
 <link rel="import" href="../bower_components/app-layout/app-layout.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
 <!-- FamilySearch Components -->
 <link rel="import" href="../bower_components/fs-client/fs-client.html">
@@ -114,31 +115,29 @@
       
       <div class="container">
         
-        <!-- content displayed when the user isn't signed in -->
-        <home-page hidden$="[[authenticated]]"></home-page>
-        
-        <person-page 
-          id="personPage" 
-          person-id="[[personId]]" 
-          hidden$="[[!_showPersonDetails(authenticated, page)]]" 
-          loading="{{personDetailsLoading}}"
-          on-person-tap="_showPersonCard"
-          on-add-child="_addChild"
-          on-add-father="_addFather"
-          on-add-mother="_addMother"
-          on-add-parent="_addParent"
-          on-add-spouse="_addSpouse"
-          on-add-child-unknown-parent="_addChildUnknownParent">
-          <paper-button on-tap="_togglePedigreePage">Pedigree</paper-button>
-        </person-page>
-        <pedigree-page 
-          id="pedigree" 
-          person-id="[[personId]]" 
-          hidden$="[[!_showPedigree(authenticated, page)]]"
-          on-person-tap="_showPersonCard"
-          on-add-person="_addPedigreePerson">
-          <paper-button on-tap="_toggleProfilePage">Person</paper-button>
-        </pedigree-page>
+        <iron-pages selected="{{page}}" attr-for-selected="name">
+          <home-page name="home"></home-page>
+          <person-page
+            id="personPage"
+            name="person"
+            loading="{{personDetailsLoading}}"
+            on-person-tap="_showPersonCard"
+            on-add-child="_addChild"
+            on-add-father="_addFather"
+            on-add-mother="_addMother"
+            on-add-parent="_addParent"
+            on-add-spouse="_addSpouse"
+            on-add-child-unknown-parent="_addChildUnknownParent">
+            <paper-button on-tap="_togglePedigreePage">Pedigree</paper-button>
+          </person-page>
+          <pedigree-page 
+            id="pedigreePage"
+            name="pedigree"
+            on-person-tap="_showPersonCard"
+            on-add-person="_addPedigreePerson">
+            <paper-button on-tap="_toggleProfilePage">Person</paper-button>
+          </pedigree-page>
+        </iron-pages>
       </div>
       
     </div>
@@ -224,7 +223,7 @@
            */
           page: {
             type: String,
-            value: 'person'
+            value: 'home'
           },
           
           authenticated: {
@@ -348,7 +347,7 @@
        * Reload the pedigree and person details
        */
       _reload() {
-        this.$.pedigree.reload();
+        this.$.pedigreePage.reload();
         this.$.personPage.reload();
       }
       
@@ -523,12 +522,14 @@
           page.redirect('/person/' + app.user.personId);
         });
         page('/person/:personId', ensureAuth, function(context){
-          app.personId = context.params.personId;
           app.page = 'person';
+          app.personId = context.params.personId;
+          app.$.personPage.personId = app.personId;
         });
         page('/pedigree/:personId', ensureAuth, function(context){
-          app.personId = context.params.personId;
           app.page = 'pedigree';
+          app.personId = context.params.personId;
+          app.$.pedigreePage.personId = app.personId;
         });
         
         // When signed in, forward to /person by default to load the current user
@@ -537,6 +538,8 @@
         page('/', function(){
           if(app.authenticated){
             page.redirect('/person');
+          } else {
+            app.page = 'home';
           }
         });
         
