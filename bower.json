@@ -25,7 +25,7 @@
     "fs-client": "fs-webcomponents/fs-client#^4.2.0",
     "fs-api-aware": "fs-webcomponents/fs-api-aware#^4.0.0",
     "fs-signin": "fs-webcomponents/fs-signin#^4.0.0",
-    "fs-person-chip": "fs-webcomponents/fs-person-chip#^4.0.0",
+    "fs-person-chip": "fs-webcomponents/fs-person-chip#^4.2.1",
     "fs-person-summary": "fs-webcomponents/fs-person-summary#^4.0.0",
     "fs-person-vitals": "fs-webcomponents/fs-person-vitals",
     "fs-person-facts": "fs-webcomponents/fs-person-facts#^4.1.1",
