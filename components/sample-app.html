@@ -101,7 +101,10 @@
       save-access-token 
       exchange-code 
       authenticated="{{authenticated}}"
-      debounce-duplicates></fs-client>
+      debounce-duplicates
+      token-cookie-path="/"
+      notify-unauthorized-responses
+      on-unauthorized-response="_unauthorizedResponse"></fs-client>
     
     <app-header>
       <app-toolbar>
@@ -375,19 +378,29 @@
        * so we must manually handle them and tell our router where to go.
        */
       _authenticatedChanged(event) {
-          
-        // Sign in
         if(event.detail.value) {
-          page('/person');
-        } 
-        
-        // Sign out
-        else {
-          this.personId = '';
-          this.user = {};
-          this.$.history.clear();
-          page('/');
+          this._signIn();
+        } else {
+          this._signOut();
         }
+      }
+      
+      /**
+       * Response to sign in events
+       */
+      _signIn() {
+        page('/person');
+      }
+      
+      /**
+       * Handle the signout process by clearing user data and forwarding to
+       * the home page.
+       */
+      _signOut() {
+        this.personId = '';
+        this.user = {};
+        this.$.history.clear();
+        page('/');
       }
       
       /**
@@ -411,6 +424,17 @@
         if(e.detail.personId){
           page('/' + this.page + '/' + e.detail.personId);
         }
+      }
+      
+      /**
+       * Handle the unauthorized-response event from fs-client. This means we
+       * have a stale session so we initiate the signout process.
+       */
+      _unauthorizedResponse() {
+        // We call the client's signOut() method so that it clear's the session
+        // and so that everything interested in authentication state changes
+        // is properly notified.
+        this.$.client.signOut();
       }
       
       _addChild(e) {
