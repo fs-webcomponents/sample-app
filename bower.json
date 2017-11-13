@@ -37,6 +37,7 @@
     "fs-person-name": "fs-webcomponents/fs-person-name#^4.0.0",
     "fs-person-gender": "fs-webcomponents/fs-person-gender#^4.0.0",
     "fs-add-person": "fs-webcomponents/fs-add-person#^4.1.0",
-    "iron-pages": "PolymerElements/iron-pages#^2.0.0"
+    "iron-pages": "PolymerElements/iron-pages#^2.0.0",
+    "fs-user-history": "fs-webcomponents/fs-user-history#^4.0.0"
   }
 }

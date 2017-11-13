@@ -16,9 +16,9 @@
 <link rel="import" href="../bower_components/fs-person-card/fs-person-card.html">
 <link rel="import" href="../bower_components/fs-api-aware/fs-api-aware.html">
 <link rel="import" href="../bower_components/fs-add-person/fs-add-person.html">
+<link rel="import" href="../bower_components/fs-user-history/fs-user-history.html">
 
 <!-- Custom Sample App Components -->
-<link rel="import" href="person-history.html">
 <link rel="import" href="home-page.html">
 <link rel="import" href="person-page.html">
 <link rel="import" href="pedigree-page.html">
@@ -60,6 +60,25 @@
       
       #person-nav-toolbar {
         margin-bottom: 1em;
+      }
+      
+      fs-user-history {
+        cursor: pointer;
+        margin-right: 1em;
+        
+        --paper-input-container-label: {
+          color: #fff;
+        }
+        --paper-input-container-input: {
+          color: #fff;
+          cursor: pointer;
+        }
+        --paper-input-container-underline: {
+          display: none;
+        }
+        --paper-dropdown-menu-icon: {
+          color: #fff;
+        }
       }
       
       #loader {
@@ -115,7 +134,7 @@
     <app-header>
       <app-toolbar>
         <div main-title class="title"><a href="/">Sample App</a></div>
-        <person-history id="history" on-person-select="_historySelect"></person-history>
+        <fs-user-history id="history" on-person-select="_historySelect"></fs-user-history>
         <fs-signin></fs-signin>
       </app-toolbar>
     </app-header>
