@@ -14,7 +14,6 @@
 <link rel="import" href="../bower_components/fs-client/fs-client.html">
 <link rel="import" href="../bower_components/fs-signin/fs-signin.html">
 <link rel="import" href="../bower_components/fs-person-card/fs-person-card.html">
-<link rel="import" href="../bower_components/fs-api-aware/fs-api-aware.html">
 <link rel="import" href="../bower_components/fs-add-person/fs-add-person.html">
 <link rel="import" href="../bower_components/fs-user-history/fs-user-history.html">
 
@@ -195,7 +194,7 @@
     </div>
   </template>
   <script>
-    class SampleApp extends FSApiAwareMixin(Polymer.Element) {
+    class SampleApp extends Polymer.Element {
   
       static get is() { return 'sample-app'; }
       
