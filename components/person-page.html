@@ -1,5 +1,12 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="person-details.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/fs-person-name/fs-person-preferred-name.html">
+<link rel="import" href="../bower_components/fs-person-vitals/fs-person-vitals.html">
+<link rel="import" href="../bower_components/fs-person-summary/fs-person-summary.html">
+<link rel="import" href="../bower_components/fs-person-families/fs-person-families.html">
+<link rel="import" href="../bower_components/fs-person-facts/fs-person-facts.html">
+<link rel="import" href="../bower_components/fs-person-sources/fs-person-sources.html">
+<link rel="import" href="../bower_components/fs-person-gender/fs-person-gender.html">
 
 <!--
 Setup the person details page.
@@ -9,13 +16,56 @@ Setup the person details page.
 <dom-module id="person-page">
   <template>
     <style>
+      #person-header {
+        display: block;
+      }
       
+      paper-card {
+        width: 100%;
+      }
     </style>
     <slot></slot>
-    <person-details 
-      id="details"
-      person-id="[[personId]]"
-      loading="{{loading}}"></person-details>
+    <paper-card id="person-header">
+      <div class="card-content">
+        <fs-person-summary person-loading="{{summaryLoading}}" person-id="[[personId]]"></fs-person-summary>
+      </div>
+    </paper-card>
+    <div>
+      <h3>Name</h3>
+      <paper-card>
+        <div class="card-content">
+          <fs-person-preferred-name person-loading="{{nameLoading}}" person-id="[[personId]]" editable></fs-person-preferred-name>
+        </div>
+      </paper-card>
+    </div>
+    <div>
+      <h3>Gender</h3>
+      <paper-card class="preferred-name-card">
+        <div class="card-content">
+          <fs-person-gender person-loading="{{genderLoading}}" person-id="[[personId]]" editable></fs-person-gender>
+        </div>
+      </paper-card>
+    </div>
+    <div>
+      <h3>Vitals</h3>
+      <fs-person-vitals person-loading="{{vitalsLoading}}" person-id="[[personId]]"></fs-person-vitals>
+    </div>
+    <div>
+      <h3>Facts</h3>
+      <fs-person-facts person-loading="{{factsLoading}}" person-id="[[personId]]" ignore-vitals></fs-person-facts>
+    </div>
+    <div id="family">
+      <h3>Family</h3>
+      <fs-person-families
+        id="families"
+        loading="{{familiesLoading}}" 
+        person-id="[[personId]]" 
+        add-persons></fs-person-families>
+    </div>
+    <div>
+      <h3>Sources</h3>
+      <fs-person-sources loading="{{sourcesLoading}}" person-id="[[personId]]"></fs-person-sources>
+    </div>
   </template>
   <script>
     class PersonPage extends Polymer.Element {
@@ -27,18 +77,81 @@ Setup the person details page.
           personId: String,
           
           /**
-           * Loading state of the person-page.
+           * Reflect the loading state of the fs-person-preferred-name element
+           */
+          nameLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Reflect the loading state of the fs-person-gender element
+           */
+          genderLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Reflects the loading state of the fs-person-vitals element.
+           */
+          vitalsLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Reflects the loading state of the fs-person-families element.
+           */
+          familiesLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Reflects the loading state of the fs-person-sources element.
+           */
+          sourcesLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Reflects the loading state of the fs-person-facts element.
+           */
+          factsLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Reflects the loading state of the fs-person-summary element.
+           */
+          summaryLoading: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Loading state of the person-details. This component is in the loading
+           * state when any of it's sub-elements are loading.
            */
           loading: {
             type: Boolean,
             value: false,
-            notify: true
+            notify: true,
+            computed: '_isLoading(nameLoading, genderLoading, vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading)'
           }
         };
       }
       
+      _isLoading(nameLoading, genderLoading, vitalsLoading, summaryLoading, factsLoading, familiesLoading, sourcesLoading) {
+        return nameLoading || genderLoading || vitalsLoading || summaryLoading || factsLoading || familiesLoading || sourcesLoading;
+      }
+      
       reload() {
-        this.$.details.reload();
+        // TODO: reload all other elements
+        this.$.families.reload();
       }
     }
     
