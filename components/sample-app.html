@@ -455,9 +455,9 @@
        * have a stale session so we initiate the signout process.
        */
       _unauthorizedResponse() {
-        // We call the client's signOut() method so that it clear's the session
-        // and so that everything interested in authentication state changes
-        // is properly notified.
+        // We call the client's signOut() method so that it clears the session
+        // and so that all elements interested in authentication state changes
+        // are properly notified.
         this.$.client.signOut();
       }
       
