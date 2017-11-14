@@ -383,8 +383,11 @@
        * Reload the pedigree and person details
        */
       _reload() {
-        this.$.pedigreePage.reload();
-        this.$.personPage.reload();
+        if(this.page === 'pedigree') {
+          this.$.pedigreePage.reload();
+        } else if(this.page === 'person') {
+          this.$.personPage.reload();
+        }
       }
       
       /**
