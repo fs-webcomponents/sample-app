@@ -216,7 +216,7 @@
           loading: {
             type: Boolean,
             value: false,
-            computed: '_isLoading(personLoading, userLoading, personDetailsLoading, pedigreeLoading, _caprSearchLoading)',
+            computed: '_isLoading(personLoading, userLoading, personDetailsLoading, pedigreeLoading)',
             observer: '_loadingChanged'
           },
           
@@ -241,15 +241,6 @@
            * Whether the pedigree page is loading.
            */
           pedigreeLoading: {
-            type: Boolean,
-            value: false
-          },
-          
-          /** 
-           * Whether the parents relationship lookup is still loading 
-           * (for adding persons via the pedigree)
-           */
-          _caprSearchLoading: {
             type: Boolean,
             value: false
           },
@@ -364,8 +355,8 @@
       /**
        * Used to calculate when the loading indicator should load.
        */
-      _isLoading(personLoading, userLoading, personDetailsLoading, pedigreeLoading, _caprSearchLoading) {
-        return personLoading || userLoading || personDetailsLoading || pedigreeLoading || _caprSearchLoading;
+      _isLoading(personLoading, userLoading, personDetailsLoading, pedigreeLoading) {
+        return personLoading || userLoading || personDetailsLoading || pedigreeLoading;
       }
       
       /**
@@ -510,65 +501,11 @@
         
         // We can't do anything without a childId
         if(childId) {
-          
-          // We need to query for an existing child-and-parents relationship
-          if(fatherId || motherId) {
-            this._caprSearchLoading = true;
-            const request = new FSRequest();
-            request.url = `/platform/tree/persons/${childId}/parents`;
-            request.ready();
-            request.addEventListener('response', (e) => {
-              const response = e.detail.response;
-              const caprIds = [];
-              if(response.data && response.data.childAndParentsRelationships) {
-                response.data.childAndParentsRelationships.forEach((rel) => {
-                  if(this._caprMatches(rel, childId, fatherId, motherId)) {
-                    caprIds.push(rel.id);
-                  }
-                });
-              }
-              this.$.addPerson.motherId = motherId;
-              this.$.addPerson.fatherId = fatherId;
-              this.$.addPerson.caprIds = caprIds;
-              this._caprSearchLoading = false;
-              this.$.addPerson.open();
-            });
-            request.generateRequest();
-          } 
-          
-          // Don't need to look for a capr; just open the dialog
-          else {
-            this.$.addPerson.childId = childId;
-            this.$.addPerson.open();
-          }
+          this.$.addPerson.childId = childId;
+          this.$.addPerson.motherId = motherId;
+          this.$.addPerson.fatherId = fatherId;
+          this.$.addPerson.open();
         }
-      }
-      
-      /**
-       * Check whether a child-and-parents relationship matches the given
-       * childId, fatherId, and motherId
-       * 
-       * @return {Boolean}
-       */
-      _caprMatches(rel, childId, fatherId, motherId) {
-        return rel.child.resourceId === childId 
-           && // Father matches in both or doesn't exist in both
-          (
-            // Father exists and matches in both
-            (fatherId && rel.father && rel.father.resourceId === fatherId)
-            
-            // Or father doesn't exist in both
-            || (!fatherId && !rel.father)
-          )
-          
-          && // Mother matches in both or doesn't exist in both
-          (
-            // Mother exists and matches in both
-            (motherId && rel.mother && rel.mother.resourceId === motherId)
-            
-            // Or mother doesn't exist in both
-            || (!motherId && !rel.mother)
-          );
       }
       
       /**
