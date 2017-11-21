@@ -31,7 +31,7 @@
     "fs-person-facts": "fs-webcomponents/fs-person-facts#^4.1.1",
     "fs-person-families": "fs-webcomponents/fs-person-families#^4.1.0",
     "fs-person-sources": "fs-webcomponents/fs-person-sources#^4.0.0",
-    "fs-pedigree": "fs-webcomponents/fs-pedigree#^4.1.0",
+    "fs-pedigree": "fs-webcomponents/fs-pedigree#^4.2.1",
     "fs-person-card": "fs-webcomponents/fs-person-card#^4.0.0",
     "web-animations-js": "web-animations/web-animations-js#^2.2",
     "fs-person-name": "fs-webcomponents/fs-person-name#^4.0.0",
