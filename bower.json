@@ -27,7 +27,7 @@
     "fs-signin": "fs-webcomponents/fs-signin#^4.0.0",
     "fs-person-chip": "fs-webcomponents/fs-person-chip#^4.2.1",
     "fs-person-summary": "fs-webcomponents/fs-person-summary#^4.0.0",
-    "fs-person-vitals": "fs-webcomponents/fs-person-vitals",
+    "fs-person-vitals": "fs-webcomponents/fs-person-vitals#^4.0.0",
     "fs-person-facts": "fs-webcomponents/fs-person-facts#^4.1.1",
     "fs-person-families": "fs-webcomponents/fs-person-families#^4.2.0",
     "fs-person-sources": "fs-webcomponents/fs-person-sources#^4.0.0",
