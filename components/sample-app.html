@@ -25,6 +25,12 @@
 <dom-module id="sample-app">
   <template>
     <style>
+      :host {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+    
       app-header {
         background-color: var(--google-green-500);
         margin-bottom: 16px;
@@ -48,13 +54,9 @@
         display: none !important;
       }
       
-      .container {
-        max-width: 900px;
-        margin: auto;
-      }
-      
       #main {
         padding-bottom: 32px;
+        flex: 1;
       }
       
       #person-nav-toolbar {
@@ -102,6 +104,17 @@
         }
       }
       
+      home-page,
+      person-page {
+        max-width: 900px;
+        margin: auto;
+      }
+      
+      iron-pages,
+      pedigree-page {
+        height: 100%;
+      }
+      
       fs-person-card {
         display: none;
         position: absolute;
@@ -139,35 +152,30 @@
     </app-header>
     
     <div id="main">
-      
-      <div class="container">
-        
-        <iron-pages selected="{{page}}" attr-for-selected="name">
-          <home-page name="home"></home-page>
-          <person-page
-            id="personPage"
-            name="person"
-            loading="{{personDetailsLoading}}"
-            on-person-tap="_showPersonCard"
-            on-add-child="_addChild"
-            on-add-father="_addFather"
-            on-add-mother="_addMother"
-            on-add-parent="_addParent"
-            on-add-spouse="_addSpouse"
-            on-add-child-unknown-parent="_addChildUnknownParent">
-            <paper-button on-tap="_togglePedigreePage">Pedigree</paper-button>
-          </person-page>
-          <pedigree-page 
-            id="pedigreePage"
-            name="pedigree"
-            loading="{{pedigreeLoading}}"
-            on-person-tap="_showPersonCard"
-            on-add-person="_addPedigreePerson">
-            <paper-button on-tap="_toggleProfilePage">Person</paper-button>
-          </pedigree-page>
-        </iron-pages>
-      </div>
-      
+      <iron-pages selected="{{page}}" attr-for-selected="name">
+        <home-page name="home"></home-page>
+        <person-page
+          id="personPage"
+          name="person"
+          loading="{{personDetailsLoading}}"
+          on-person-tap="_showPersonCard"
+          on-add-child="_addChild"
+          on-add-father="_addFather"
+          on-add-mother="_addMother"
+          on-add-parent="_addParent"
+          on-add-spouse="_addSpouse"
+          on-add-child-unknown-parent="_addChildUnknownParent">
+          <paper-button on-tap="_togglePedigreePage">Pedigree</paper-button>
+        </person-page>
+        <pedigree-page 
+          id="pedigreePage"
+          name="pedigree"
+          loading="{{pedigreeLoading}}"
+          on-person-tap="_showPersonCard"
+          on-add-person="_addPedigreePerson">
+          <paper-button on-tap="_toggleProfilePage">Person</paper-button>
+        </pedigree-page>
+      </iron-pages>
     </div>
     
     <div id="footer">

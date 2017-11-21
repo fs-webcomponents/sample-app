@@ -9,15 +9,16 @@ Setup the home page.
 <dom-module id="home-page">
   <template>
     <style>
+      :host {
+        display: block;
+        text-align: center;
+      }
+      
       fs-signin {
         --fs-signin-signin: {
           background-color: var(--google-red-500);
         }
         font-size: initial;
-      }
-      
-      :host {
-        text-align: center;
       }
       
       img {

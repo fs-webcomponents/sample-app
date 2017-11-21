@@ -9,13 +9,20 @@ Setup the pedigree page.
 <dom-module id="pedigree-page">
   <template>
     <style>
+      :host {
+        display: block;
+        overflow: hidden;
+      }
+    
       fs-pedigree {
-        --fs-pedigree-person-width: 200px;
+        height: 100%;
+        width: 100%;
       }
     </style>
     <slot></slot>
     <fs-pedigree 
-      id="pedigree" 
+      id="pedigree"
+      add-persons
       person-id="[[personId]]"
       loading="{{loading}}"></fs-pedigree>
   </template>

@@ -16,6 +16,10 @@ Setup the person details page.
 <dom-module id="person-page">
   <template>
     <style>
+      :host {
+        display: block;
+      }
+    
       #person-header {
         display: block;
       }
@@ -24,6 +28,7 @@ Setup the person details page.
         width: 100%;
       }
     </style>
+    <div class="container">
     <slot></slot>
     <paper-card id="person-header">
       <div class="card-content">
