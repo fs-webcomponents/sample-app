@@ -5,6 +5,7 @@
 <link rel="import" href="../bower_components/app-layout/app-layout.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icons/hardware-icons.html">
@@ -184,6 +185,8 @@
       </p>
     </div>
     
+    <paper-toast id="toast"></paper-toast>
+    
     <!-- This card is shown when people are clicked on from the family or pedigree section -->
     <fs-person-card id="personCard">
       <div class="card-actions">
@@ -199,6 +202,7 @@
     <div id="loader" hidden$="[[!loading]]">
       <paper-spinner-lite active></paper-spinner>
     </div>
+    
   </template>
   <script>
     class SampleApp extends Polymer.Element {
@@ -290,6 +294,16 @@
         // I'm pretty sure we can't do this via markup (i.e. can't register
         // an event listener on the custom element itself).
         this.addEventListener('click', this._hidePersonCard.bind(this));
+        
+        // Listen for HTTP errors and show them in a toast. Sadly we don't have
+        // very user-friendly error messages.
+        this.addEventListener('fs-request-response', (e) => {
+          const response = e.detail.response;
+          if(response && response.statusCode >= 400) {
+            this.$.toast.text = `Error ${response.statusCode}: ${response.statusText}`;
+            this.$.toast.open();
+          }
+        });
       }
       
       /**
