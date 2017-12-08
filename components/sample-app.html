@@ -159,12 +159,12 @@
           name="person"
           loading="{{personDetailsLoading}}"
           on-person-click="_showPersonCard"
-          on-add-child="_addChild"
+          on-add-child="_addPerson"
           on-add-father="_addFather"
           on-add-mother="_addMother"
-          on-add-parent="_addParent"
-          on-add-spouse="_addSpouse"
-          on-add-child-unknown-parent="_addChildUnknownParent">
+          on-add-parent="_addPerson"
+          on-add-spouse="_addPerson"
+          on-add-child-unknown-parent="_addPerson">
           <paper-button on-tap="_togglePedigreePage">Pedigree</paper-button>
         </person-page>
         <pedigree-page 
@@ -172,7 +172,7 @@
           name="pedigree"
           loading="{{pedigreeLoading}}"
           on-person-click="_showPersonCard"
-          on-add-person="_addPedigreePerson">
+          on-add-person="_addPerson">
           <paper-button on-tap="_toggleProfilePage">Person</paper-button>
         </pedigree-page>
       </iron-pages>
@@ -476,57 +476,22 @@
         this.$.client.signOut();
       }
       
-      _addChild(e) {
-        this.$.addPerson.fatherId = e.detail.fatherId;
-        this.$.addPerson.motherId = e.detail.motherId;
-        this.$.addPerson.open();
-      }
-      
       _addFather(e) {
-        this.$.addPerson.caprIds = e.detail.caprIds;
-        this.$.addPerson.motherId = e.detail.motherId;
-        this.$.addPerson.gender = 'http://gedcomx.org/Male';
-        this.$.addPerson.open();
+        this._addPerson(e, 'http://gedcomx.org/Male');
       }
       
       _addMother(e) {
-        this.$.addPerson.caprIds = e.detail.caprIds;
-        this.$.addPerson.fatherId = e.detail.fatherId;
-        this.$.addPerson.gender = 'http://gedcomx.org/Female';
-        this.$.addPerson.open();
+        this._addPerson(e, 'http://gedcomx.org/Female');
       }
       
-      _addParent(e) {
-        this.$.addPerson.childId = e.detail.childId;
-        this.$.addPerson.open();
-      }
-      
-      _addSpouse(e) {
-        this.$.addPerson.spouseId = e.detail.spouseId;
-        this.$.addPerson.open();
-      }
-      
-      _addChildUnknownParent(e) {
-        // One of these will be undefined. We don't know which so we just set both.
+      _addPerson(e, gender) {
         this.$.addPerson.fatherId = e.detail.fatherId;
         this.$.addPerson.motherId = e.detail.motherId;
+        this.$.addPerson.childId = e.detail.childId;
+        this.$.addPerson.spouseId = e.detail.spouseId;
+        this.$.addPerson.caprIds = e.detail.caprIds;
+        this.$.addPerson.gender = gender;
         this.$.addPerson.open();
-      }
-      
-      /**
-       * Trigger the Add Person dialog
-       */
-      _addPedigreePerson(e) {
-        
-        const {childId, fatherId, motherId} = e.detail;
-        
-        // We can't do anything without a childId
-        if(childId) {
-          this.$.addPerson.childId = childId;
-          this.$.addPerson.motherId = motherId;
-          this.$.addPerson.fatherId = fatherId;
-          this.$.addPerson.open();
-        }
       }
       
       /**
