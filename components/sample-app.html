@@ -478,6 +478,7 @@
         this.$.addPerson.spouseId = e.detail.spouseId;
         this.$.addPerson.caprIds = e.detail.caprIds;
         this.$.addPerson.gender = e.detail.gender;
+        this.$.addPerson.disableGender = typeof e.detail.gender !== 'undefined';
         this.$.addPerson.open();
       }
       
